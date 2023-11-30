@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.octo.mapper.MenuMapper">
+
+<!--    <resultMap id="menuMap" type="menu">-->
+<!--        <id property="id" column="id"></id>-->
+<!--        <result property="name" column="name"></result>-->
+<!--        <result property="path" column="path"></result>-->
+<!--        <result property="menuNo" column="menu_no"></result>-->
+<!--        <result property="metaNo" column="meta_no"></result>-->
+<!--        <result property="parentNo" column="parent_no"></result>-->
+
+<!--        <association property="meta" javaType="menuMeta">-->
+<!--            <id property="id" column="meta_id"></id>-->
+<!--            <result property="metaNo" column="meta_no"></result>-->
+<!--            <result property="locale" column="locale"></result>-->
+<!--            <result property="icon" column="icon"></result>-->
+<!--            <result property="order" column="order"></result>-->
+<!--            <result property="requiresAuth" column="requires_auth"></result>-->
+<!--        </association>-->
+<!--    </resultMap>-->
+
+<!--    <select id="getMenuList" resultMap="menuMap">-->
+<!--        select u.id,-->
+<!--               u.name,-->
+<!--               u.path,-->
+<!--               u.menu_no,-->
+<!--               u.meta_no,-->
+<!--               u.parent_no,-->
+<!--               a.id meta_id,-->
+<!--               a.locale,-->
+<!--               a.icon,-->
+<!--               a.order,-->
+<!--               a.requires_auth-->
+<!--        from tb_menu AS u-->
+<!--                 left join tb_menu_meta AS a on u.meta_no = a.meta_no-->
+<!--    </select>-->
+
+</mapper>
