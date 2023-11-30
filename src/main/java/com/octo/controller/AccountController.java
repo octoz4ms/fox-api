@@ -4,7 +4,7 @@ package com.octo.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.octo.dto.request.UserParam;
+import com.octo.dto.request.LoginReq;
 import com.octo.entity.Account;
 import com.octo.service.IAccountService;
 import com.octo.util.JwtUtil;
@@ -31,7 +31,7 @@ public class AccountController {
     private IAccountService accountService;
 
     @PostMapping("/login")
-    public Response login(@RequestBody UserParam param) {
+    public Response login(@RequestBody LoginReq param) {
         System.out.println(param);
         HashMap<String, Object> data = new HashMap<>(2);
         Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, param.getUsername()).eq(Account::getPassword, param.getPassword()));

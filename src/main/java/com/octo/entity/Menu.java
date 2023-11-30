@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zms
- * @since 2023-11-29
+ * @since 2023-11-30
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -30,6 +30,11 @@ public class Menu implements Serializable {
     private String menuNo;
 
     /**
+     * 菜单名称
+     */
+    private String menuName;
+
+    /**
      * 上级菜单NO
      */
     private String parentNo;
@@ -43,11 +48,6 @@ public class Menu implements Serializable {
      * 路由名称
      */
     private String name;
-
-    /**
-     * 菜单名称
-     */
-    private String locale;
 
     /**
      * 图标

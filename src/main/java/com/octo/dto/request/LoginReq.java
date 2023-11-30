@@ -6,7 +6,7 @@ import lombok.Data;
  * @author zms
  */
 @Data
-public class UserParam {
+public class LoginReq {
     private String username;
     private String password;
 }

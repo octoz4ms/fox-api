@@ -1,7 +1,7 @@
 package com.octo.service;
 
+import cn.hutool.core.lang.tree.Tree;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.octo.dto.response.MenuResp;
 import com.octo.entity.Menu;
 
 import java.util.List;
@@ -20,6 +20,21 @@ public interface IMenuService extends IService<Menu> {
      *
      * @return
      */
-    public List<MenuResp> getMenuList();
+    List<Tree<String>> getMenuList();
 
+    /**
+     * 获取菜单树选项
+     *
+     * @param menuName
+     * @return
+     */
+    List<Tree<String>> getMenuTreeOptions(String menuName);
+
+    /**
+     * 保存菜单
+     *
+     * @param menu
+     * @return
+     */
+    boolean saveMenu(Menu menu);
 }

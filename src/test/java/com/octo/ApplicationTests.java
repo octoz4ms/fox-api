@@ -1,10 +1,10 @@
-package com.octo.tauri;
+package com.octo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TauriApplicationTests {
+class ApplicationTests {
 
     @Test
     void contextLoads() {
