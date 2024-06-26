@@ -22,7 +22,7 @@ public class MyRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        log.info("授权");
+        MyRealm.log.info("授权");
         return null;
     }
 
@@ -36,12 +36,11 @@ public class MyRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        System.out.println("测试");
         String token = (String) authenticationToken.getPrincipal();
         if (!JwtUtil.validateToken(token)) {
             throw new AuthenticationException("token校验失败");
         }
-        Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, JwtUtil.getUsername(token)));
+        Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, JwtUtil.getAccountName(token)));
         if (null == account) {
             throw new AccountException("该用户不存在");
         }

@@ -2,8 +2,6 @@ package com.octo.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.octo.dto.request.LoginReq;
 import com.octo.entity.Account;
 import com.octo.service.IAccountService;
@@ -12,6 +10,7 @@ import com.octo.util.Response;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ public class AccountController {
 
     @PostMapping("/login")
     public Response login(@RequestBody LoginReq param) {
-        System.out.println(param);
         HashMap<String, Object> data = new HashMap<>(2);
         Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, param.getUsername()).eq(Account::getPassword, param.getPassword()));
         if (account != null) {
@@ -43,18 +41,17 @@ public class AccountController {
         return Response.fail("账号密码错误");
     }
 
-    @GetMapping("list")
-    public Response getUserList(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
-        Page<Account> accountPage = new Page<>(page, size);
-        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        return Response.success(accountService.page(accountPage, queryWrapper));
+    @GetMapping("/page")
+    public Response getAccounts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit) {
+        Map<String, Object> accountList = accountService.getAccountPage(page, limit);
+        return Response.success(accountList);
     }
 
-    @PostMapping("/logout")
-    public String logout(@RequestBody Map<String, String> map) {
-        System.out.println("username: " + map.get("username"));
-        System.out.println("password: " + map.get("password"));
-        return "退出！";
+    @GetMapping("/info")
+    public Response getInfo(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String accountName = JwtUtil.getAccountName(token);
+        return accountService.getAccount(accountName);
     }
 
 }

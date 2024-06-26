@@ -1,12 +1,14 @@
 package com.octo.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -14,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zms
- * @since 2023-11-30
+ * @since 2024-01-20
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -30,14 +32,14 @@ public class Menu implements Serializable {
     private String menuNo;
 
     /**
-     * 菜单名称
-     */
-    private String menuName;
-
-    /**
      * 上级菜单NO
      */
     private String parentNo;
+
+    /**
+     * 菜单名称
+     */
+    private String title;
 
     /**
      * 路由地址
@@ -45,9 +47,9 @@ public class Menu implements Serializable {
     private String path;
 
     /**
-     * 路由名称
+     * 组件地址
      */
-    private String name;
+    private String component;
 
     /**
      * 图标
@@ -57,12 +59,31 @@ public class Menu implements Serializable {
     /**
      * 排序
      */
-    private Long sort;
+    private Long sortNumber;
 
     /**
-     * 是否需要登录鉴权 0不需要、1需要
+     * 是否展示
      */
-    private Boolean requiresAuth;
+    private Boolean hide;
+
+    /**
+     * 菜单类型：0目录或菜单、1按钮
+     */
+    private Integer menuType;
+
+    /**
+     * 打开方式：0组件、1内链、2外链
+     */
+    private Integer openType;
+
+    /**
+     * 权限标识
+     */
+    private String authority;
+
+
+    @TableField(exist = false)
+    private boolean checked;
 
 
 }

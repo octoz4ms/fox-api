@@ -1,19 +1,20 @@
 package com.octo.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.lang.tree.Tree;
-import cn.hutool.core.lang.tree.TreeNodeConfig;
-import cn.hutool.core.lang.tree.TreeUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.octo.dto.response.MenuMetaResp;
 import com.octo.entity.Menu;
+import com.octo.entity.RoleMenu;
 import com.octo.mapper.MenuMapper;
 import com.octo.service.IMenuService;
+import com.octo.service.IRoleMenuService;
+import com.octo.util.Response;
 import com.octo.util.SnowIdUtil;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -27,49 +28,37 @@ import java.util.List;
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
 
-    @Override
-    public List<Tree<String>> getMenuList() {
-        List<Tree<String>> treeList = TreeUtil.build(list(), null, getConfig(), ((menu, treeNode) -> {
-            treeNode.setId(menu.getMenuNo());
-            treeNode.setParentId(menu.getParentNo());
-            treeNode.setName(menu.getName());
-            treeNode.setWeight(menu.getSort());
-            treeNode.putExtra("path", menu.getPath());
-            // meta信息
-            MenuMetaResp meta = BeanUtil.toBean(menu, MenuMetaResp.class);
-            meta.setOrder(menu.getSort());
-            meta.setLocale(menu.getMenuName());
-            treeNode.putExtra("meta", meta);
-        }));
-        return treeList;
-    }
-
-    @Override
-    public List<Tree<String>> getMenuTreeOptions(String menuName) {
-        List<Menu> menuList = list(Wrappers.lambdaQuery(Menu.class).like(Menu::getMenuName, menuName));
-        List<Tree<String>> treeList = TreeUtil.build(menuList, null, getConfig(), ((menu, treeNode) -> {
-            treeNode.setId(menu.getMenuNo());
-            treeNode.setParentId(menu.getParentNo());
-            treeNode.putExtra("menuName", menu.getMenuName());
-        }));
-        return treeList;
-    }
+    @Resource
+    private IRoleMenuService roleMenuService;
 
     @Override
     public boolean saveMenu(Menu menu) {
         if (StrUtil.isEmpty(menu.getMenuNo())) {
             menu.setMenuNo(SnowIdUtil.nextIdStr());
+            return save(menu);
         }
-        return save(menu);
+        return update(menu, new LambdaUpdateWrapper<Menu>().eq(Menu::getMenuNo, menu.getMenuNo()));
     }
 
-    public TreeNodeConfig getConfig() {
-        TreeNodeConfig config = new TreeNodeConfig();
-        config.setIdKey("menuNo");
-        config.setParentIdKey("parentNo");
-        config.setWeightKey("sort");
-        return config;
+    @Override
+    public List<Menu> getMenuList(String title, String path, String authority) {
+        LambdaQueryWrapper<Menu> queryWrapper = Wrappers.lambdaQuery(Menu.class)
+                .like(StrUtil.isNotBlank(title), Menu::getTitle, title)
+                .like(StrUtil.isNotBlank(path), Menu::getPath, path)
+                .like(StrUtil.isNotBlank(authority), Menu::getAuthority, authority);
+        return list(queryWrapper);
     }
 
-
+    @Override
+    public Response deleteMenu(String menuNo) {
+        if (StrUtil.isBlank(menuNo)) {
+            return Response.fail();
+        }
+        List<RoleMenu> list = roleMenuService.list(Wrappers.lambdaQuery(RoleMenu.class).eq(RoleMenu::getMenuNo, menuNo));
+        if (list.size() > 0) {
+            return Response.fail("请先与角色解绑");
+        }
+        boolean result = remove(new LambdaQueryWrapper<Menu>().eq(Menu::getMenuNo, menuNo));
+        return result ? Response.success() : Response.fail();
+    }
 }

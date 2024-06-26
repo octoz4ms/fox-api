@@ -21,12 +21,12 @@ public class JwtUtil {
      */
     public static String generateToken(String username) {
         Date now = new Date();
-        Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
+        Date expirationDate = new Date(now.getTime() + JwtUtil.EXPIRATION_TIME);
         String token = JWT.create()
                 .withSubject(username)
                 .withIssuedAt(now)
                 .withExpiresAt(expirationDate)
-                .sign(Algorithm.HMAC256(SECRET_KEY));
+                .sign(Algorithm.HMAC256(JwtUtil.SECRET_KEY));
         return token;
     }
 
@@ -38,7 +38,7 @@ public class JwtUtil {
      */
     public static boolean validateToken(String token) {
         try {
-            JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(token);
+            JWT.require(Algorithm.HMAC256(JwtUtil.SECRET_KEY)).build().verify(token);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,7 +47,7 @@ public class JwtUtil {
         }
     }
 
-    public static String getUsername(String token) {
+    public static String getAccountName(String token) {
         DecodedJWT decode = JWT.decode(token);
         return decode.getSubject();
     }
