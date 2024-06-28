@@ -10,7 +10,19 @@ spring:
     password: Shuai3198@
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  redis:
+    host: 111.229.106.212
+    port: 6379
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
 mybatis-plus:
   type-aliases-package: com.octo.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
