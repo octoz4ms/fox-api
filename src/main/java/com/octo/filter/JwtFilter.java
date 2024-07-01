@@ -1,5 +1,6 @@
 package com.octo.filter;
 
+import cn.hutool.core.util.StrUtil;
 import com.octo.shiro.JwtToken;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 
@@ -23,6 +24,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
+        if (StrUtil.isEmpty(jwt)) {
+            JwtFilter.onLoginFail(servletResponse);
+            return false;
+        }
         jwt = jwt.substring(7);
         JwtToken jwtToken = new JwtToken(jwt);
         try {
@@ -31,7 +36,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         } catch (Exception e) {
             e.printStackTrace();
             // 调用下面的方法向客户端返回错误信息
-            onLoginFail(servletResponse);
+            JwtFilter.onLoginFail(servletResponse);
             return false;
         }
         return true;

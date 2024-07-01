@@ -13,6 +13,7 @@ spring:
   redis:
     host: 111.229.106.212
     port: 6379
+    password: Shuai3198@
     lettuce:
       pool:
         max-active: 8

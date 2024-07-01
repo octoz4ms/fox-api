@@ -41,7 +41,10 @@ public class ShiroConfig {
         // 添加URL过滤规则
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         filterChainDefinitionMap.put("/user/login", "anon");
-        filterChainDefinitionMap.put("/**", "anon");
+        filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/captcha", "anon");
+        filterChainDefinitionMap.put("/**", "jwt"); // 需要认证
+//        filterChainDefinitionMap.put("/**", "anon");
         filterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return filterFactoryBean;
     }

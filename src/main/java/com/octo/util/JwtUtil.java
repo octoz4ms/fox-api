@@ -41,8 +41,8 @@ public class JwtUtil {
             JWT.require(Algorithm.HMAC256(JwtUtil.SECRET_KEY)).build().verify(token);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e);
+//            e.printStackTrace();
+//            System.out.println(e);
             return false;
         }
     }
