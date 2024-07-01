@@ -28,7 +28,7 @@ public class LoginController {
     @GetMapping("/captcha")
     public ApiResponse<Map<String, Object>> getCaptcha() {
         String uuid = IdUtil.simpleUUID();
-        int width = 100, height = 40, codeCount = 15;
+        int width = 100, height = 40, codeCount = 4;
         CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(width, height, codeCount, 4);
         HashMap<String, Object> data = new HashMap<>();
         data.put("img", captcha.getImageBase64Data());
