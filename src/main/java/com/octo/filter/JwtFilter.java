@@ -2,6 +2,7 @@ package com.octo.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.octo.shiro.JwtToken;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 
 import javax.servlet.ServletRequest;
@@ -9,6 +10,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 
 /**
@@ -24,8 +26,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
+        System.out.println("jwt:" + jwt);
         if (StrUtil.isEmpty(jwt)) {
-            JwtFilter.onLoginFail(servletResponse);
+            JwtFilter.onLoginFail(servletResponse, new AuthenticationException("未携带token!"));
             return false;
         }
         jwt = jwt.substring(7);
@@ -36,7 +39,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         } catch (Exception e) {
             e.printStackTrace();
             // 调用下面的方法向客户端返回错误信息
-            JwtFilter.onLoginFail(servletResponse);
+            JwtFilter.onLoginFail(servletResponse, e);
             return false;
         }
         return true;
@@ -48,9 +51,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      * @param response
      * @throws IOException
      */
-    private static void onLoginFail(ServletResponse response) throws IOException {
+    private static void onLoginFail(ServletResponse response, Exception e) throws IOException {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        httpResponse.getWriter().write("login error");
+        response.setContentType("application/json;charset=UTF-8"); // 设置响应内容类型为 JSON
+        PrintWriter out = response.getWriter();
+        out.write("{\"code\":401,\"message\":\"" + e.getMessage() + "\",\"data\":null}");
+        out.flush();
     }
 }

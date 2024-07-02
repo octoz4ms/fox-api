@@ -50,7 +50,7 @@ public class AccountController {
     @GetMapping("/info")
     public ApiResponse getInfo(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String accountName = JwtUtil.getAccountName(token);
+        String accountName = JwtUtil.getUsername(token);
         return accountService.getAccount(accountName);
     }
 

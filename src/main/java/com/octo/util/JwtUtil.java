@@ -41,13 +41,12 @@ public class JwtUtil {
             JWT.require(Algorithm.HMAC256(JwtUtil.SECRET_KEY)).build().verify(token);
             return true;
         } catch (Exception e) {
-//            e.printStackTrace();
-//            System.out.println(e);
+            e.printStackTrace();
             return false;
         }
     }
 
-    public static String getAccountName(String token) {
+    public static String getUsername(String token) {
         DecodedJWT decode = JWT.decode(token);
         return decode.getSubject();
     }

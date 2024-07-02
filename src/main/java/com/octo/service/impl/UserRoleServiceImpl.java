@@ -1,9 +1,9 @@
 package com.octo.service.impl;
 
-import com.octo.entity.AccountRole;
-import com.octo.mapper.AccountRoleMapper;
-import com.octo.service.IAccountRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.octo.entity.UserRole;
+import com.octo.mapper.UserRoleMapper;
+import com.octo.service.IUserRoleService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2023-11-23
  */
 @Service
-public class AccountRoleServiceImpl extends ServiceImpl<AccountRoleMapper, AccountRole> implements IAccountRoleService {
+public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> implements IUserRoleService {
 
 }

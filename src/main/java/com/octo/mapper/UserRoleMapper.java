@@ -1,7 +1,7 @@
 package com.octo.mapper;
 
-import com.octo.entity.AccountRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.octo.entity.UserRole;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author zms
  * @since 2023-11-23
  */
-public interface AccountRoleMapper extends BaseMapper<AccountRole> {
+public interface UserRoleMapper extends BaseMapper<UserRole> {
 
 }

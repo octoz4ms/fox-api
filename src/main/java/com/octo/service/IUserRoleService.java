@@ -1,7 +1,7 @@
 package com.octo.service;
 
-import com.octo.entity.AccountRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.octo.entity.UserRole;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author zms
  * @since 2023-11-23
  */
-public interface IAccountRoleService extends IService<AccountRole> {
+public interface IUserRoleService extends IService<UserRole> {
 
 }

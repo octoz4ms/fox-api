@@ -38,11 +38,11 @@ public class MyRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         String token = (String) authenticationToken.getPrincipal();
         if (!JwtUtil.validateToken(token)) {
-            throw new AuthenticationException("token校验失败");
+            throw new AuthenticationException("token校验失败！");
         }
-        Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, JwtUtil.getAccountName(token)));
+        Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, JwtUtil.getUsername(token)));
         if (null == account) {
-            throw new AccountException("该用户不存在");
+            throw new AccountException("该用户不存在！");
         }
         return new SimpleAuthenticationInfo(account, token, getName());
     }

@@ -6,5 +6,8 @@ import java.util.Map;
 
 public interface ILoginService {
 
+    Map<String, Object> generateCaptcha();
+
     Map<String, Object> login(LoginReq loginReq);
+
 }
