@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.octo.dto.request.LoginReq;
 import com.octo.entity.Account;
 import com.octo.service.IAccountService;
+import com.octo.util.ApiResponse;
 import com.octo.util.JwtUtil;
-import com.octo.util.Response;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,25 +30,25 @@ public class AccountController {
     private IAccountService accountService;
 
     @PostMapping("/login")
-    public Response login(@RequestBody LoginReq param) {
+    public ApiResponse login(@RequestBody LoginReq param) {
         HashMap<String, Object> data = new HashMap<>(2);
         Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, param.getUsername()).eq(Account::getPassword, param.getPassword()));
         if (account != null) {
             String token = JwtUtil.generateToken(account.getAccountName());
             data.put("token", token);
-            return Response.success(data);
+            return ApiResponse.success(data);
         }
-        return Response.fail("账号密码错误");
+        return ApiResponse.fail("账号密码错误");
     }
 
     @GetMapping("/page")
-    public Response getAccounts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit) {
+    public ApiResponse getAccounts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit) {
         Map<String, Object> accountList = accountService.getAccountPage(page, limit);
-        return Response.success(accountList);
+        return ApiResponse.success(accountList);
     }
 
     @GetMapping("/info")
-    public Response getInfo(HttpServletRequest request) {
+    public ApiResponse getInfo(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String accountName = JwtUtil.getAccountName(token);
         return accountService.getAccount(accountName);

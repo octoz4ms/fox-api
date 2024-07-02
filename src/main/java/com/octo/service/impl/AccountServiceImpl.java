@@ -9,7 +9,7 @@ import com.octo.mapper.AccountMapper;
 import com.octo.service.IAccountService;
 import com.octo.service.IMenuService;
 import com.octo.service.IRoleService;
-import com.octo.util.Response;
+import com.octo.util.ApiResponse;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -33,16 +33,15 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account> impl
     private IMenuService menuService;
 
     @Override
-    public Response getAccount(String accountName) {
+    public ApiResponse getAccount(String accountName) {
         Account account = getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, accountName));
         if (ObjectUtil.isEmpty(account)) {
-            return Response.fail("用户名错误");
+            return ApiResponse.fail("用户名错误");
         }
         // 隐藏密码
         account.setPassword(null);
 
-
-        return Response.success(account);
+        return ApiResponse.success(account);
     }
 
     @Override

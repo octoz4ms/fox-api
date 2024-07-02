@@ -2,7 +2,7 @@ package com.octo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.octo.entity.Account;
-import com.octo.util.Response;
+import com.octo.util.ApiResponse;
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ public interface IAccountService extends IService<Account> {
      * @param accountName
      * @return
      */
-    Response getAccount(String accountName);
+    ApiResponse getAccount(String accountName);
 
     /**
      * 获取账户列表

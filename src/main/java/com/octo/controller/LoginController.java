@@ -3,7 +3,7 @@ package com.octo.controller;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.core.util.IdUtil;
-import com.octo.constant.RedisConstants;
+import com.octo.constants.RedisConstants;
 import com.octo.dto.request.LoginReq;
 import com.octo.service.ILoginService;
 import com.octo.util.ApiResponse;

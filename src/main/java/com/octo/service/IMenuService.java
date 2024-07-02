@@ -2,7 +2,7 @@ package com.octo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.octo.entity.Menu;
-import com.octo.util.Response;
+import com.octo.util.ApiResponse;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public interface IMenuService extends IService<Menu> {
      * @param menuNo
      * @return
      */
-    Response deleteMenu(String menuNo);
+    ApiResponse deleteMenu(String menuNo);
 }
 
 

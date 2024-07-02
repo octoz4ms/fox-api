@@ -15,7 +15,6 @@ import com.octo.service.IMenuService;
 import com.octo.service.IRoleMenuService;
 import com.octo.service.IRoleService;
 import com.octo.util.GeneralUtil;
-import com.octo.util.SnowIdUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,7 +41,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public boolean editRole(Role role) {
         if (StrUtil.isBlank(role.getRoleNo())) {
-            role.setRoleNo(SnowIdUtil.nextIdStr());
+            role.setRoleNo(GeneralUtil.nextIdStr());
             role.setCreateTime(LocalDateTime.now());
             return save(role);
         }

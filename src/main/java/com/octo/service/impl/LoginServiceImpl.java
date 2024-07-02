@@ -1,9 +1,11 @@
 package com.octo.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.octo.constant.RedisConstants;
+import com.octo.constants.RedisConstants;
 import com.octo.dto.request.LoginReq;
 import com.octo.entity.Account;
+import com.octo.enums.ResponseCodeEnums;
+import com.octo.exception.CustomException;
 import com.octo.service.IAccountService;
 import com.octo.service.ILoginService;
 import com.octo.util.JwtUtil;
@@ -31,7 +33,7 @@ public class LoginServiceImpl implements ILoginService {
         // 校验验证码
         String code = (String) redisUtil.get(key);
         if (code == null || !code.equals(loginReq.getCode())) {
-            throw new RuntimeException("验证码错误");
+            throw new CustomException(ResponseCodeEnums.CAPTCHA_ERROR);
         }
         // 查询用户
         Account account = accountService.getOne(Wrappers.lambdaQuery(Account.class).eq(Account::getAccountName, loginReq.getUsername()));
