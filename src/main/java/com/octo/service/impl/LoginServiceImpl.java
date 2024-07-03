@@ -35,8 +35,9 @@ public class LoginServiceImpl implements ILoginService {
         int width = 100, height = 40, codeCount = 4;
         CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(width, height, codeCount, 4);
         HashMap<String, Object> data = new HashMap<>();
-        data.put("img", captcha.getImageBase64Data());
+        data.put("base64", captcha.getImageBase64Data());
         data.put("uuid", uuid);
+        data.put("text", captcha.getCode());
         String key = RedisConstants.CAPTCHA_CODE_KEY + uuid;
         redisUtil.set(key, captcha.getCode(), 10, TimeUnit.MINUTES);
         return data;

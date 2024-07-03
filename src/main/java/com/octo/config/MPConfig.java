@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @author zms
  */
 @Configuration
-public class MybatisPlusConfig {
+public class MPConfig {
 
     /**
      * 添加分页插件

@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ResponseCodeEnums {
-    SUCCESS(200, "操作成功"),
+    SUCCESS(0, "操作成功"),
     FAIL(500, "操作失败"),
     HTTP_STATUS_200(200, "ok"),
     HTTP_STATUS_400(400, "request error"),

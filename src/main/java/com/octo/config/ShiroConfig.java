@@ -40,9 +40,9 @@ public class ShiroConfig {
         filterFactoryBean.setFilters(filterMap);
         // 添加URL过滤规则
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-//        filterChainDefinitionMap.put("/user/login", "anon");
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/captcha", "anon");
+//        filterChainDefinitionMap.put("/auth/user", "anon");
         filterChainDefinitionMap.put("/**", "jwt");
         filterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return filterFactoryBean;
