@@ -1,8 +1,8 @@
 package com.octo.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.octo.entity.Account;
-import com.octo.service.IAccountService;
+import com.octo.entity.User;
+import com.octo.service.IUserService;
 import com.octo.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 @Slf4j
 public class MyRealm extends AuthorizingRealm {
     @Resource
-    private IAccountService accountService;
+    private IUserService userService;
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
@@ -40,10 +40,10 @@ public class MyRealm extends AuthorizingRealm {
         if (!JwtUtil.validateToken(token)) {
             throw new AuthenticationException("token校验失败！");
         }
-        Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, JwtUtil.getUsername(token)));
-        if (null == account) {
+        User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getUserName, JwtUtil.getUsername(token)));
+        if (null == user) {
             throw new AccountException("该用户不存在！");
         }
-        return new SimpleAuthenticationInfo(account, token, getName());
+        return new SimpleAuthenticationInfo(user, token, getName());
     }
 }

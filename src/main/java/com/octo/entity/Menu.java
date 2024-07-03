@@ -96,10 +96,10 @@ public class Menu implements Serializable {
     @TableField("open_type")
     private Integer openType;
 
-    @TableField("createTime")
+    @TableField("create_time")
     private LocalDateTime createTime;
 
-    @TableField("updateTime")
+    @TableField("update_time")
     private LocalDateTime updateTime;
 
 

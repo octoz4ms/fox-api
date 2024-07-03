@@ -42,7 +42,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         .select(UserRole::getRoleNo)
                         .eq(UserRole::getUserNo, user.getUserNo()))
                 .stream().map(r -> r.getRoleNo()).collect(Collectors.toList());
-        if (roleNos.size() == 0) {
+        if (roleNos.isEmpty()) {
             user.setRoles(List.of());
             user.setAuthorities(List.of());
             return user;
@@ -54,7 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         .select(RoleMenu::getMenuNo)
                         .in(RoleMenu::getRoleNo, roleNos))
                 .stream().map(m -> m.getMenuNo()).collect(Collectors.toList());
-        if (menuNos.size() == 0) {
+        if (menuNos.isEmpty()) {
             user.setAuthorities(List.of());
             return user;
         }

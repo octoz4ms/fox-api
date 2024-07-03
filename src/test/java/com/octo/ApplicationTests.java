@@ -26,9 +26,7 @@ class ApplicationTests {
 
     @Test
     void contextLoads() {
-//        List<String> roleNos = userRoleService.list(Wrappers.lambdaQuery(UserRole.class)
-//                .select(UserRole::getRoleNo)).stream().map(r -> r.getRoleNo()).collect(Collectors.toList());
-//        System.out.println("roleNos:" + roleNos);
+        System.out.println("List.of()" + List.of());
         roleService.list(Wrappers.lambdaQuery(Role.class).in(Role::getRoleNo, List.of()));
     }
 

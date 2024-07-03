@@ -25,14 +25,20 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        String jwt = request.getHeader("Authorization");
-        System.out.println("jwt:" + jwt);
-        if (StrUtil.isEmpty(jwt)) {
+        // 获取 Authorization 头部的值
+        String authorizationHeader = request.getHeader("Authorization");
+        // 解析 Bearer Token
+        String token = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7); // 从 "Bearer " 后面开始截取
+        }
+        // Token为空 直接拦截
+        if (StrUtil.isEmpty(token)) {
             JwtFilter.onLoginFail(servletResponse, new AuthenticationException("未携带token!"));
             return false;
         }
-        jwt = jwt.substring(7);
-        JwtToken jwtToken = new JwtToken(jwt);
+        // 封装成jwtToken进行登录认证
+        JwtToken jwtToken = new JwtToken(token);
         try {
             // 委托 realm 进行登录认证
             getSubject(servletRequest, servletResponse).login(jwtToken);
