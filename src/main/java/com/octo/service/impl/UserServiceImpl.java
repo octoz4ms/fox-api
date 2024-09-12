@@ -58,7 +58,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             user.setAuthorities(List.of());
             return user;
         }
-        List<Menu> menuList = menuService.list(Wrappers.lambdaQuery(Menu.class).in(Menu::getMenuNo, menuNos));
+        List<Menu> menuList = menuService.list(Wrappers.lambdaQuery(Menu.class).in(Menu::getMenuNo, menuNos).orderByAsc(Menu::getSortNumber));
         user.setAuthorities(menuList);
         return user;
     }

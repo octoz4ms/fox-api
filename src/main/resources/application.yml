@@ -27,3 +27,7 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
+file:
+  path: 'C:\\Users\\zhang\\Desktop'
+
+
