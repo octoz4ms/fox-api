@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -49,5 +50,18 @@ public class JwtUtil {
     public static String getUsername(String token) {
         DecodedJWT decode = JWT.decode(token);
         return decode.getSubject();
+    }
+
+    public static String getUsername(HttpServletRequest request) {
+        String username = "";
+        // 获取 Authorization 头部的值
+        String authorizationHeader = request.getHeader("Authorization");
+        // 解析 Bearer Token
+        String token = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7); // 从 "Bearer " 后面开始截取
+            username = JwtUtil.getUsername(token);
+        }
+        return username;
     }
 }

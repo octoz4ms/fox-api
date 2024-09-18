@@ -33,7 +33,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public User getUserByUsername(String username) {
-        User user = getOne(Wrappers.lambdaQuery(User.class).eq(User::getUserName, username));
+        User user = getOne(Wrappers.lambdaQuery(User.class).eq(User::getUsername, username));
         if (user == null) {
             return null;
         }

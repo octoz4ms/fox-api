@@ -42,6 +42,7 @@ public class ShiroConfig {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/captcha", "anon");
+        filterChainDefinitionMap.put("/file", "anon");
 //        filterChainDefinitionMap.put("/auth/user", "anon");
         filterChainDefinitionMap.put("/**", "jwt");
         filterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);

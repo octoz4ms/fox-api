@@ -58,7 +58,7 @@ public class LoginServiceImpl implements ILoginService {
             throw new UnknownAccountException("用户不存在！");
         }
         // 生成token
-        String token = JwtUtil.generateToken(user.getUserName());
+        String token = JwtUtil.generateToken(user.getUsername());
         map.put("access_token", token);
         map.put("user", user);
         return map;
