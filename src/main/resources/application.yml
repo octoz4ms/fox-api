@@ -39,4 +39,8 @@ file:
     path: "http://octopi.site/file"
 
 
+  # 文件存储根目录
+  upload-dir: "C:\\Users\\zhang\\Desktop"
+
+
 
