@@ -27,3 +27,20 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
+#file:
+#  root:
+#    directory: "C:\\Users\\zhang\\Desktop"
+#  host: ""
+
+file:
+  root:
+    directory: "/opt/upload"
+  access:
+    path: "http://octopi.site/file"
+
+
+  # 文件存储根目录
+  upload-dir: "C:\\Users\\zhang\\Desktop"
+
+
+

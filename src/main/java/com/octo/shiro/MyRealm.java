@@ -40,7 +40,7 @@ public class MyRealm extends AuthorizingRealm {
         if (!JwtUtil.validateToken(token)) {
             throw new AuthenticationException("token校验失败！");
         }
-        User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getUserName, JwtUtil.getUsername(token)));
+        User user = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, JwtUtil.getUsername(token)));
         if (null == user) {
             throw new AccountException("该用户不存在！");
         }
