@@ -4,7 +4,7 @@ package com.octo.controller;
 import com.octo.service.IFileService;
 import com.octo.service.IUserService;
 import com.octo.util.ApiResponse;
-import com.octo.util.FileStorageUtil;
+import com.octo.util.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +33,7 @@ public class FileController {
     private IUserService userService;
 
     @Resource
-    private FileStorageUtil fileStorageUtil;
+    private FileStorageService fileStorageService;
 
 
     @GetMapping("page")
@@ -70,13 +70,13 @@ public class FileController {
 
     @PostMapping("/upload")
     public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam(value = "path", defaultValue = "") String path) {
-        String fileName = fileStorageUtil.uploadFile(file, path);
+        String fileName = fileStorageService.uploadFile(file, path);
         return ApiResponse.success(fileName);
     }
 
 
     @GetMapping("/download/{fileName}")
     public void downloadFile(@PathVariable(value = "fileName") String fileName, @RequestParam(value = "path", defaultValue = "") String path, HttpServletResponse response) {
-        fileStorageUtil.downloadFile(fileName, path, response);
+//        fileStorageService.downloadFile(fileName, path, response);
     }
 }
