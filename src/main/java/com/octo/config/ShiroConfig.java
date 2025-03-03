@@ -43,7 +43,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/captcha", "anon");
 //        filterChainDefinitionMap.put("/auth/user", "anon");
-        filterChainDefinitionMap.put("/**", "jwt");
+        filterChainDefinitionMap.put("/**", "anon");
+//        filterChainDefinitionMap.put("/**", "jwt");
+
         filterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return filterFactoryBean;
     }

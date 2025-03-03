@@ -1,6 +1,7 @@
 package com.octo.filter;
 
 import com.octo.shiro.JwtToken;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 
 import javax.servlet.ServletRequest;
@@ -14,6 +15,7 @@ import java.io.PrintWriter;
 /**
  * @author zms
  */
+@Slf4j
 public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -41,19 +43,17 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 getSubject(servletRequest, servletResponse).login(jwtToken);
                 return true;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
                 // 调用下面的方法向客户端返回错误信息
                 JwtFilter.onLoginFail(servletResponse, e);
             }
         }
+        log.error("---------------------");
         return false;
     }
 
     /**
      * 登录失败时默认返回 401 状态码
-     *
-     * @param response
-     * @throws IOException
      */
     private static void onLoginFail(ServletResponse response, Exception e) throws IOException {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
