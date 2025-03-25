@@ -1,10 +1,12 @@
 package com.octo.exception;
 
 import com.octo.enums.ResponseCodeEnums;
+import lombok.Getter;
 
+@Getter
 public class CustomException extends RuntimeException {
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 
     public CustomException(int code, String message) {
         super(message);
@@ -18,12 +20,4 @@ public class CustomException extends RuntimeException {
         message = codeEnums.getMessage();
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
 }
