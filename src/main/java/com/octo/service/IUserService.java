@@ -2,6 +2,7 @@ package com.octo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.octo.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -13,4 +14,6 @@ import com.octo.entity.User;
  */
 public interface IUserService extends IService<User> {
     User getUserByUsername(String username);
+
+    void importExcel(MultipartFile file);
 }

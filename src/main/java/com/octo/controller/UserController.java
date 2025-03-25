@@ -1,8 +1,14 @@
 package com.octo.controller;
 
 
+import com.octo.service.IUserService;
+import com.octo.util.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -15,6 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    
+    @Autowired
+    private IUserService userService;
 
+    @PostMapping("/import/excel")
+    public ApiResponse<?> importExcel(@RequestParam("file") MultipartFile file) {
+        userService.importExcel(file);
+        return ApiResponse.success();
+    }
 }

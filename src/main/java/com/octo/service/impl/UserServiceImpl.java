@@ -1,13 +1,19 @@
 package com.octo.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.octo.entity.*;
+import com.octo.listener.UserExcelListener;
 import com.octo.mapper.UserMapper;
 import com.octo.service.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,5 +67,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<Menu> menuList = menuService.list(Wrappers.lambdaQuery(Menu.class).in(Menu::getMenuNo, menuNos).orderByAsc(Menu::getSortNumber));
         user.setAuthorities(menuList);
         return user;
+    }
+
+    @Override
+    public void importExcel(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new RuntimeException("文件不能为空");
+        }
+
+        try {
+            UserExcelListener listener = new UserExcelListener();
+            EasyExcel.read(file.getInputStream(), ExcelUser.class, listener).sheet().doRead();
+            ArrayList<User> users = new ArrayList<>();
+            for (ExcelUser excelUser : listener.getDataList()) {
+                User user = new User();
+                BeanUtils.copyProperties(excelUser, user);
+                users.add(user);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("导入失败");
+        }
     }
 }

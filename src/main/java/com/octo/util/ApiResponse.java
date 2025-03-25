@@ -28,6 +28,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(ResponseCodeEnums.SUCCESS.getCode(), ResponseCodeEnums.SUCCESS.getMessage());
     }
 
+    public static <T> ApiResponse<T> success(String msg) {
+        return new ApiResponse<>(ResponseCodeEnums.SUCCESS.getCode(), msg);
+    }
+
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>(ResponseCodeEnums.SUCCESS.getCode(), ResponseCodeEnums.SUCCESS.getMessage(), data);
     }
