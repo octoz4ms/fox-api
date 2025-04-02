@@ -10,11 +10,11 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ * 角色菜单表
  * </p>
  *
  * @author zms
- * @since 2024-01-20
+ * @since 2025-04-02
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -27,9 +27,9 @@ public class RoleMenu implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private String roleNo;
+    private Long roleId;
 
-    private String menuNo;
+    private Long menuId;
 
 
 }

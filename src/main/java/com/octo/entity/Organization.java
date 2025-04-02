@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 文件表
+ * 机构表
  * </p>
  *
  * @author zms
@@ -20,8 +20,8 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("tb_file")
-public class File implements Serializable {
+@TableName("tb_organization")
+public class Organization implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,40 +29,53 @@ public class File implements Serializable {
     private Long id;
 
     /**
-     * 文件名
+     * 机构名称
      */
-    private String name;
+    private String organizationName;
 
     /**
-     * 文件路径
+     * 机构全称
      */
-    private String path;
+    private String organizationFullName;
 
     /**
-     * 访问路径
+     * 机构类型
      */
-    private String url;
+    private Integer organizationType;
 
     /**
-     * 文件大小
+     * 机构代码
      */
-    private Long length;
+    private String organizationCode;
 
     /**
-     * 上传用户NO
+     * 上级机构
      */
-    private String creator;
+    private Long parentId;
 
     /**
-     * 上传用户名称
+     * 排序
      */
-    private String creatorName;
+    private Integer sortNumber;
 
     /**
-     * 上传时间
+     * 备注
+     */
+    private String comments;
+
+    /**
+     * 删除标识
+     */
+    private Integer deleted;
+
+    /**
+     * 创建时间
      */
     private LocalDateTime createTime;
 
+    /**
+     * 更新时间
+     */
     private LocalDateTime updateTime;
 
 

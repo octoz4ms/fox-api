@@ -1,14 +1,13 @@
 package com.octo.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import java.time.LocalDateTime;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author zms
- * @since 2024-01-17
+ * @since 2025-04-02
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -28,11 +27,6 @@ public class Role implements Serializable {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
-    /**
-     * 角色编号
-     */
-    private String roleNo;
 
     /**
      * 角色标识
@@ -48,6 +42,11 @@ public class Role implements Serializable {
      * 备注
      */
     private String comments;
+
+    /**
+     * 删除标识
+     */
+    private Integer deleted;
 
     /**
      * 创建时间
