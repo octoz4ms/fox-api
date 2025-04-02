@@ -12,6 +12,7 @@ import com.octo.service.ILoginService;
 import com.octo.service.IUserService;
 import com.octo.util.JwtUtil;
 import com.octo.util.RedisUtil;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,9 @@ public class LoginServiceImpl implements ILoginService {
         User user = userService.getUserByUsername(loginReq.getUsername());
         if (user == null) {
             throw new UnknownAccountException("用户不存在！");
+        }
+        if (user.getPassword() == null || !user.getPassword().equals(loginReq.getPassword())) {
+            throw new IncorrectCredentialsException("密码错误！");
         }
         // 生成token
         String token = JwtUtil.generateToken(user.getUsername());
