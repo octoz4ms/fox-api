@@ -63,8 +63,4 @@ public class LoginServiceImpl implements ILoginService {
         map.put("user", user);
         return map;
     }
-
-    public void hello() {
-
-    }
 }

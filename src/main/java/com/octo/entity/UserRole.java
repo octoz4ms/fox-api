@@ -1,21 +1,20 @@
 package com.octo.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-
 /**
  * <p>
- * 账户角色表
+ * 用户角色表
  * </p>
  *
  * @author zms
- * @since 2023-11-23
+ * @since 2025-04-02
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -28,9 +27,9 @@ public class UserRole implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private String userNo;
+    private Long userId;
 
-    private String roleNo;
+    private Long roleId;
 
 
 }

@@ -44,27 +44,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return null;
         }
         // 获取角色
-        List<String> roleNos = userRoleService.list(Wrappers.lambdaQuery(UserRole.class)
-                        .select(UserRole::getRoleNo)
-                        .eq(UserRole::getUserNo, user.getUserNo()))
-                .stream().map(r -> r.getRoleNo()).collect(Collectors.toList());
-        if (roleNos.isEmpty()) {
+        List<Long> roleIds = userRoleService.list(Wrappers.lambdaQuery(UserRole.class)
+                        .select(UserRole::getRoleId)
+                        .eq(UserRole::getUserId, user.getId()))
+                .stream().map(UserRole::getRoleId).collect(Collectors.toList());
+        if (roleIds.isEmpty()) {
             user.setRoles(List.of());
             user.setAuthorities(List.of());
             return user;
         }
-        List<Role> roleList = roleService.list(Wrappers.lambdaQuery(Role.class).in(Role::getRoleNo, roleNos));
+        List<Role> roleList = roleService.list(Wrappers.lambdaQuery(Role.class).in(Role::getId, roleIds));
         user.setRoles(roleList);
         // 获取菜单
-        List<String> menuNos = roleMenuService.list(Wrappers.lambdaQuery(RoleMenu.class)
-                        .select(RoleMenu::getMenuNo)
-                        .in(RoleMenu::getRoleNo, roleNos))
-                .stream().map(m -> m.getMenuNo()).collect(Collectors.toList());
-        if (menuNos.isEmpty()) {
+        List<Long> menuIds = roleMenuService.list(Wrappers.lambdaQuery(RoleMenu.class)
+                        .select(RoleMenu::getMenuId)
+                        .in(RoleMenu::getRoleId, roleIds))
+                .stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
+        if (menuIds.isEmpty()) {
             user.setAuthorities(List.of());
             return user;
         }
-        List<Menu> menuList = menuService.list(Wrappers.lambdaQuery(Menu.class).in(Menu::getMenuNo, menuNos).orderByAsc(Menu::getSortNumber));
+        List<Menu> menuList = menuService.list(Wrappers.lambdaQuery(Menu.class).in(Menu::getId, menuIds).orderByAsc(Menu::getSortNumber));
         user.setAuthorities(menuList);
         return user;
     }

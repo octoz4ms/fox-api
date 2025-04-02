@@ -30,7 +30,7 @@ public class AccountController {
     private IAccountService accountService;
 
     @PostMapping("/login")
-    public ApiResponse login(@RequestBody LoginReq param) {
+    public ApiResponse<?> login(@RequestBody LoginReq param) {
         HashMap<String, Object> data = new HashMap<>(2);
         Account account = accountService.getOne(new LambdaQueryWrapper<Account>().eq(Account::getAccountName, param.getUsername()).eq(Account::getPassword, param.getPassword()));
         if (account != null) {
@@ -42,13 +42,13 @@ public class AccountController {
     }
 
     @GetMapping("/page")
-    public ApiResponse getAccounts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit) {
+    public ApiResponse<?> getAccounts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit) {
         Map<String, Object> accountList = accountService.getAccountPage(page, limit);
         return ApiResponse.success(accountList);
     }
 
     @GetMapping("/info")
-    public ApiResponse getInfo(HttpServletRequest request) {
+    public ApiResponse<?> getInfo(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String accountName = JwtUtil.getUsername(token);
         return accountService.getAccount(accountName);

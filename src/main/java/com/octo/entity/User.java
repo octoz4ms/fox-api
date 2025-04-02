@@ -1,6 +1,5 @@
 package com.octo.entity;
 
-import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -20,7 +19,7 @@ import java.util.List;
  * </p>
  *
  * @author zms
- * @since 2024-07-02
+ * @since 2025-04-02
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -34,98 +33,76 @@ public class User implements Serializable {
     private Long id;
 
     /**
-     * 用户编号
+     * 账号
      */
-    @TableField("user_no")
-    private String userNo;
-
-    /**
-     * 登录账号
-     */
-    @TableField("username")
-    @ExcelProperty("登录账号")
     private String username;
 
     /**
      * 密码
      */
-    @TableField("password")
-    @ExcelProperty("登录密码")
     private String password;
 
     /**
      * 昵称
      */
-    @TableField("nickname")
-    @ExcelProperty("用户名")
     private String nickname;
 
     /**
      * 手机号
      */
-    @TableField("phone")
-    @ExcelProperty("手机号")
     private String phone;
 
     /**
      * 邮箱
      */
-    @TableField("email")
-    @ExcelProperty("邮箱")
     private String email;
 
     /**
      * 出生日期
      */
-    @TableField("birthday")
     private LocalDate birthday;
 
     /**
-     * 性别：1女、2男
+     * 性别：1女，2男
      */
-    @TableField("sex")
     private String sex;
 
     /**
-     * 个人简介
+     * 简介
      */
-    @TableField("description")
     private String description;
 
     /**
-     * 账号状态：0无效、1有效
+     * 状态：0有效，1无效
      */
-    @TableField("status")
     private Integer status;
 
     /**
-     * 创建人
+     * 机构ID
      */
-    @TableField("creator")
-    private String creator;
+    private Long organizationId;
+
+    /**
+     * 删除标识：0未删除，1已删除
+     */
+    private Integer deleted;
 
     /**
      * 创建时间
      */
-    @TableField("create_time")
     private LocalDateTime createTime;
-
-    /**
-     * 更新人
-     */
-    @TableField("updater")
-    private String updater;
 
     /**
      * 更新时间
      */
-    @TableField("update_time")
     private LocalDateTime updateTime;
 
 
     @TableField(exist = false)
-    private List<Menu> authorities;
+    private List<Role> roles;
 
     @TableField(exist = false)
-    private List<Role> roles;
+    private List<Menu> authorities;
+
+
 }
