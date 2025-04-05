@@ -17,9 +17,6 @@ public interface IOrganizationService extends IService<Organization> {
 
     List<Organization> listOrganizations(String organizationName, Integer organizationType);
 
-    void addOrganization(Organization organization);
-
     void updateOrganization(Organization organization);
 
-    void deleteOrganization(Long id);
 }

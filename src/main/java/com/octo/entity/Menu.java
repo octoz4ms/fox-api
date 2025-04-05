@@ -1,5 +1,6 @@
 package com.octo.entity;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -15,7 +16,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zms
- * @since 2025-04-02
+ * @since 2025-04-05
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -69,6 +70,12 @@ public class Menu implements Serializable {
      * 菜单类型：0目录/菜单，1按钮
      */
     private Integer menuType;
+
+    /**
+     * 删除标识：0未删除，1已删除
+     */
+    @TableLogic
+    private Boolean deleted;
 
     private LocalDateTime createTime;
 

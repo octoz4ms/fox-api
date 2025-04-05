@@ -2,6 +2,7 @@ package com.octo.service.impl;
 
 import com.alibaba.excel.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.octo.entity.Organization;
@@ -31,27 +32,23 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 .eq(organizationType != null, Organization::getOrganizationType, organizationType);
         return list(queryWrapper);
     }
-
-    @Override
-    public void addOrganization(Organization organization) {
-        boolean save = save(organization);
-        if (!save) {
-            throw new CustomException(ResponseCodeEnums.FAIL);
-        }
-    }
-
+    
     @Override
     public void updateOrganization(Organization organization) {
-        boolean update = updateById(organization);
-        if (!update) {
-            throw new CustomException(ResponseCodeEnums.FAIL);
+        if (organization.getId() == null) {
+            throw new CustomException(500, "该机构不存在");
         }
-    }
-
-    @Override
-    public void deleteOrganization(Long id) {
-        boolean remove = removeById(id);
-        if (!remove) {
+        LambdaUpdateWrapper<Organization> updateWrapper = Wrappers.lambdaUpdate(Organization.class)
+                .eq(Organization::getId, organization.getId())
+                .set(Organization::getParentId, organization.getParentId())
+                .set(Organization::getOrganizationType, organization.getOrganizationType())
+                .set(Organization::getOrganizationName, organization.getOrganizationName())
+                .set(Organization::getSortNumber, organization.getSortNumber())
+                .set(Organization::getOrganizationFullName, organization.getOrganizationFullName())
+                .set(Organization::getComments, organization.getComments())
+                .set(Organization::getOrganizationCode, organization.getOrganizationCode());
+        boolean update = update(updateWrapper);
+        if (!update) {
             throw new CustomException(ResponseCodeEnums.FAIL);
         }
     }

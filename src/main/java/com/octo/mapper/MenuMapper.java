@@ -3,8 +3,6 @@ package com.octo.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.octo.entity.Menu;
 
-import java.util.List;
-
 /**
  * <p>
  * 菜单表 Mapper 接口

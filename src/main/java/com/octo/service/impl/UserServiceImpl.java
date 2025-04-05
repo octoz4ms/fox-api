@@ -1,12 +1,17 @@
 package com.octo.service.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.util.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.octo.dto.response.PageResult;
 import com.octo.entity.*;
 import com.octo.listener.UserExcelListener;
 import com.octo.mapper.UserMapper;
 import com.octo.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +30,7 @@ import java.util.stream.Collectors;
  * @author zms
  * @since 2024-07-02
  */
+@Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
@@ -87,5 +93,37 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         } catch (IOException e) {
             throw new RuntimeException("导入失败");
         }
+    }
+
+    @Override
+    public PageResult<User> pageUsers(User user, Integer pageNum, Integer pageSize) {
+        // 分页参数
+        Page<User> page = new Page<>(pageNum, pageSize);
+
+        // 动态条件构建
+        LambdaQueryWrapper<User> queryWrapper = Wrappers.lambdaQuery(User.class)
+                .like(StringUtils.isNotBlank(user.getUsername()), User::getUsername, user.getUsername())
+                .like(StringUtils.isNotBlank(user.getNickname()), User::getNickname, user.getNickname())
+                .eq(user.getSex() != null, User::getSex, user.getSex())
+                .eq(user.getOrganizationId() != null, User::getOrganizationId, user.getOrganizationId());
+        Page<User> userPage = page(page, queryWrapper);
+
+        // 查询角色
+        userPage.getRecords().forEach(u -> {
+            List<UserRole> userRoles = userRoleService.list(Wrappers.lambdaQuery(UserRole.class)
+                    .select(UserRole::getRoleId)
+                    .eq(UserRole::getUserId, u.getId()));
+            log.error("userRole:{}", userRoles);
+            if(!userRoles.isEmpty()){
+                List<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
+                log.error("roleIds:{}",roleIds);
+                List<Role> roles = roleService.list(Wrappers.lambdaQuery(Role.class).in(Role::getId, roleIds));
+
+                u.setRoles(roles);
+            }else{
+                u.setRoles(List.of());
+            }
+        });
+        return new PageResult<>(userPage);
     }
 }

@@ -1,17 +1,15 @@
 package com.octo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.util.List;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * <p>
@@ -19,7 +17,7 @@ import java.util.List;
  * </p>
  *
  * @author zms
- * @since 2025-04-02
+ * @since 2025-04-05
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -63,9 +61,9 @@ public class User implements Serializable {
     private LocalDate birthday;
 
     /**
-     * 性别：1女，2男
+     * 性别：1男，2女
      */
-    private String sex;
+    private Integer sex;
 
     /**
      * 简介
@@ -75,7 +73,7 @@ public class User implements Serializable {
     /**
      * 状态：0有效，1无效
      */
-    private Integer status;
+    private Boolean status;
 
     /**
      * 机构ID
@@ -85,7 +83,8 @@ public class User implements Serializable {
     /**
      * 删除标识：0未删除，1已删除
      */
-    private Integer deleted;
+    @TableLogic
+    private Boolean deleted;
 
     /**
      * 创建时间
@@ -97,12 +96,10 @@ public class User implements Serializable {
      */
     private LocalDateTime updateTime;
 
-
     @TableField(exist = false)
     private List<Role> roles;
 
     @TableField(exist = false)
     private List<Menu> authorities;
-
 
 }

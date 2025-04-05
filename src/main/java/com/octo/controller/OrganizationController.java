@@ -33,8 +33,8 @@ public class OrganizationController {
 
     @PostMapping
     public ApiResponse<?> addOrganization(@RequestBody Organization organization) {
-        organizationService.addOrganization(organization);
-        return ApiResponse.success();
+        boolean save = organizationService.save(organization);
+        return save ? ApiResponse.success() : ApiResponse.fail();
     }
 
     @PutMapping
@@ -45,7 +45,7 @@ public class OrganizationController {
 
     @DeleteMapping("{id}")
     public ApiResponse<?> deleteOrganization(@PathVariable Long id) {
-        organizationService.deleteOrganization(id);
-        return ApiResponse.success();
+        boolean remove = organizationService.removeById(id);
+        return remove ? ApiResponse.success() : ApiResponse.fail();
     }
 }
