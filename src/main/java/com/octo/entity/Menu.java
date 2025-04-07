@@ -1,14 +1,12 @@
 package com.octo.entity;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -16,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zms
- * @since 2025-04-05
+ * @since 2025-04-07
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -29,7 +27,10 @@ public class Menu implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private String parentId;
+    /**
+     * 父级菜单
+     */
+    private Long parentId;
 
     /**
      * 权限标识
@@ -62,14 +63,24 @@ public class Menu implements Serializable {
     private Long sortNumber;
 
     /**
-     * 是否展示
+     * 组件元数据
+     */
+    private String meta;
+
+    /**
+     * 是否展示：0展示，1隐藏
      */
     private Boolean hide;
 
     /**
-     * 菜单类型：0目录/菜单，1按钮
+     * 菜单类型：0目录，1菜单，2按钮
      */
     private Integer menuType;
+
+    /**
+     * 打开方式：0组件，1内嵌，2外链
+     */
+    private Integer openType;
 
     /**
      * 删除标识：0未删除，1已删除
@@ -77,8 +88,10 @@ public class Menu implements Serializable {
     @TableLogic
     private Boolean deleted;
 
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
 

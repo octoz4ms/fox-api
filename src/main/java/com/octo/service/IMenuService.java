@@ -2,7 +2,6 @@ package com.octo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.octo.entity.Menu;
-import com.octo.util.ApiResponse;
 
 import java.util.List;
 
@@ -16,53 +15,9 @@ import java.util.List;
  */
 public interface IMenuService extends IService<Menu> {
 
-    /**
-     * 保存菜单
-     *
-     * @param menu
-     * @return
-     */
-    boolean saveMenu(Menu menu);
-
-    /**
-     * 获取菜单列表
-     *
-     * @param title
-     * @param path
-     * @param authority
-     * @return
-     */
     List<Menu> getMenuList(String title, String path, String authority);
 
-    /**
-     * 删除菜单
-     *
-     * @param menuNo
-     * @return
-     */
-    ApiResponse deleteMenu(String menuNo);
+    void updateMenu(Menu menu);
+
+    void deleteMenu(Long id);
 }
-
-
-//    /**
-//     * 获取菜单列表
-//     *
-//     * @return
-//     */
-//    List<Tree<String>> getMenuList();
-//
-//    /**
-//     * 获取菜单树选项
-//     *
-//     * @param menuName
-//     * @return
-//     */
-//    List<Tree<String>> getMenuTreeOptions(String menuName);
-//
-//    /**
-//     * 保存菜单
-//     *
-//     * @param menu
-//     * @return
-//     */
-//    boolean saveMenu(Menu menu);

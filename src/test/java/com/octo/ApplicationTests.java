@@ -18,8 +18,9 @@ class ApplicationTests {
 
     @Test
     void contextLoads() {
-        String a = "";
-        System.out.println(a == null);
+        Long a = 1L;
+        Integer b = 1;
+        System.out.println(a.equals(b));
     }
 
 }
