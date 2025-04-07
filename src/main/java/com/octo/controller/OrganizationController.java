@@ -25,14 +25,13 @@ public class OrganizationController {
     private IOrganizationService organizationService;
 
     @GetMapping
-    public ApiResponse<?> listOrganizations(@RequestParam(name = "organizationName") String organizationName,
-                                            @RequestParam(name = "organizationType") Integer organizationType) {
+    public ApiResponse<?> listOrganizations(String organizationName, Integer organizationType) {
         List<Organization> organizations = organizationService.listOrganizations(organizationName, organizationType);
         return ApiResponse.success(organizations);
     }
 
     @PostMapping
-    public ApiResponse<?> addOrganization(@RequestBody Organization organization) {
+    public ApiResponse<?> createOrganization(@RequestBody Organization organization) {
         boolean save = organizationService.save(organization);
         return save ? ApiResponse.success() : ApiResponse.fail();
     }

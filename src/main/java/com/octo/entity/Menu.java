@@ -70,7 +70,7 @@ public class Menu implements Serializable {
     /**
      * 是否展示：0展示，1隐藏
      */
-    private Boolean hide;
+    private Integer hide;
 
     /**
      * 菜单类型：0目录，1菜单，2按钮
@@ -86,11 +86,17 @@ public class Menu implements Serializable {
      * 删除标识：0未删除，1已删除
      */
     @TableLogic
-    private Boolean deleted;
+    private Integer deleted;
 
+    /**
+     * 创建时间
+     */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
+    /**
+     * 更新时间
+     */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 

@@ -1,11 +1,11 @@
 package com.octo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.octo.dto.response.PageResult;
 import com.octo.entity.Menu;
 import com.octo.entity.Role;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -17,57 +17,15 @@ import java.util.Map;
  */
 public interface IRoleService extends IService<Role> {
 
-    /**
-     * 保存、更新角色
-     *
-     * @param role
-     * @return
-     */
-    boolean editRole(Role role);
+    PageResult<Role> pageRole(Role role, int pageNum, int pageSize);
 
-    /**
-     * 分页查询角色列表
-     *
-     * @param roleName
-     * @param roleCode
-     * @param comments
-     * @param sort
-     * @param order
-     * @param page
-     * @param limit
-     * @return
-     */
-    Map<String, Object> rolePage(String roleName, String roleCode, String comments, String sort, String order, int page, int limit);
+    void updateRole(Role role);
 
-    /**
-     * 删除角色
-     *
-     * @param roleNo
-     * @return
-     */
-    boolean deleteByRoleNo(String roleNo);
+    void deleteRole(Long id);
 
-    /**
-     * 批量删除角色
-     *
-     * @param roleNos
-     * @return
-     */
-    boolean deleteRoleInBatch(List<String> roleNos);
+    void deleteRoleInBatch(List<Long> roleIds);
 
-    /**
-     * 获取角色分配的菜单
-     *
-     * @return
-     */
-    List<Menu> getRoleMenus(String roleNo);
+    List<Menu> getMenusByRoleId(Long roleId);
 
-    /**
-     * 分配菜单
-     *
-     * @param roleNo
-     * @param menuNos
-     * @return
-     */
-    boolean assignMenu(String roleNo, List<String> menuNos);
+    void assignMenu(Long roleId, List<Long> menuIds);
 }

@@ -32,7 +32,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 .eq(organizationType != null, Organization::getOrganizationType, organizationType);
         return list(queryWrapper);
     }
-    
+
     @Override
     public void updateOrganization(Organization organization) {
         if (organization.getId() == null) {
@@ -47,7 +47,7 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
                 .set(Organization::getOrganizationFullName, organization.getOrganizationFullName())
                 .set(Organization::getComments, organization.getComments())
                 .set(Organization::getOrganizationCode, organization.getOrganizationCode());
-        boolean update = update(updateWrapper);
+        boolean update = update(new Organization(), updateWrapper);
         if (!update) {
             throw new CustomException(ResponseCodeEnums.FAIL);
         }

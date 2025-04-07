@@ -1,7 +1,7 @@
 package com.octo.controller;
 
 
-import com.octo.entity.Menu;
+import com.octo.dto.response.PageResult;
 import com.octo.entity.Role;
 import com.octo.service.IRoleService;
 import com.octo.util.ApiResponse;
@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
+
+import static com.baomidou.mybatisplus.extension.toolkit.Db.save;
 
 /**
  * <p>
@@ -26,45 +27,35 @@ public class RoleController {
     @Resource
     private IRoleService roleService;
 
-    @PostMapping()
-    public ApiResponse editRole(@RequestBody Role role) {
-        boolean result = roleService.editRole(role);
-        return result ? ApiResponse.success() : ApiResponse.fail();
-    }
-
     @GetMapping("/page")
-    public ApiResponse getRoles(String roleName,
-                                String roleCode,
-                                String comments,
-                                String sort,
-                                String order,
-                                @RequestParam(defaultValue = "1") int page,
-                                @RequestParam(defaultValue = "10") int limit) {
-        Map<String, Object> roleList = roleService.rolePage(roleName, roleCode, comments, sort, order, page, limit);
-        return ApiResponse.success(roleList);
+    public ApiResponse<PageResult<Role>> getRoles(Role role,
+                                                  @RequestParam(name = "page", defaultValue = "1") int pageNum,
+                                                  @RequestParam(name = "limit", defaultValue = "10") int pageSize) {
+        PageResult<Role> roles = roleService.pageRole(role, pageNum, pageSize);
+        return ApiResponse.success(roles);
     }
 
-    @DeleteMapping("/{roleNo}")
-    public ApiResponse deleteRole(@PathVariable String roleNo) {
-        boolean result = roleService.deleteByRoleNo(roleNo);
-        return result ? ApiResponse.success() : ApiResponse.fail();
+    @PostMapping
+    public ApiResponse<Role> addRole(@RequestBody Role role) {
+        boolean save = save(role);
+        return save ? ApiResponse.success() : ApiResponse.fail();
+    }
+
+    @PutMapping
+    public ApiResponse<Role> updateRole(@RequestBody Role role) {
+        roleService.updateRole(role);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Role> deleteRole(@PathVariable Long id) {
+        roleService.deleteRole(id);
+        return ApiResponse.success();
     }
 
     @DeleteMapping("/batch")
-    public ApiResponse deleteRoles(@RequestBody List<String> roleNos) {
-        boolean result = roleService.deleteRoleInBatch(roleNos);
-        return result ? ApiResponse.success() : ApiResponse.fail();
-    }
-
-    @GetMapping("/menu/{roleNo}")
-    public ApiResponse getRoleMenus(@PathVariable String roleNo) {
-        List<Menu> menuList = roleService.getRoleMenus(roleNo);
-        return ApiResponse.success(menuList);
-    }
-
-    @PostMapping("/menu/{roleNo}")
-    public ApiResponse assignMenu(@PathVariable String roleNo, @RequestBody List<String> menuNos) {
-        boolean result = roleService.assignMenu(roleNo, menuNos);
-        return result ? ApiResponse.success() : ApiResponse.fail();
+    public ApiResponse<Role> deleteRoles(@RequestBody List<Long> roleIds) {
+        roleService.deleteRoleInBatch(roleIds);
+        return ApiResponse.success();
     }
 }

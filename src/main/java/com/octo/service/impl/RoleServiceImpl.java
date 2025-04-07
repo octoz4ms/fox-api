@@ -1,17 +1,26 @@
 package com.octo.service.impl;
 
+import com.alibaba.excel.util.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.octo.dto.response.PageResult;
 import com.octo.entity.Menu;
 import com.octo.entity.Role;
+import com.octo.entity.RoleMenu;
+import com.octo.enums.ResponseCodeEnums;
+import com.octo.exception.CustomException;
 import com.octo.mapper.RoleMapper;
 import com.octo.service.IMenuService;
 import com.octo.service.IRoleMenuService;
 import com.octo.service.IRoleService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -29,103 +38,72 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     private IMenuService menuService;
 
     @Override
-    public boolean editRole(Role role) {
-        return false;
+    public PageResult<Role> pageRole(Role role, int pageNum, int pageSize) {
+        // 分页
+        Page<Role> page = new Page<>(pageNum, pageSize);
+
+        // 动态条件构建
+        LambdaQueryWrapper<Role> queryWrapper = Wrappers.lambdaQuery(Role.class)
+                .like(StringUtils.isNotBlank(role.getRoleName()), Role::getRoleName, role.getRoleName())
+                .like(StringUtils.isNotBlank(role.getRoleCode()), Role::getRoleCode, role.getRoleCode());
+
+        Page<Role> rolePage = page(page, queryWrapper);
+        return new PageResult<>(rolePage);
     }
 
     @Override
-    public Map<String, Object> rolePage(String roleName, String roleCode, String comments, String sort, String order, int page, int limit) {
-        return Map.of();
+    public void updateRole(Role role) {
+        if (role.getId() == null) {
+            throw new CustomException(500, "该角色不存在");
+        }
+        LambdaUpdateWrapper<Role> updateWrapper = Wrappers.lambdaUpdate(Role.class)
+                .eq(Role::getId, role.getId())
+                .set(Role::getRoleName, role.getRoleName())
+                .set(Role::getRoleCode, role.getRoleCode())
+                .set(Role::getComments, role.getComments());
+
+        boolean update = update(new Role(), updateWrapper);
+        if (!update) {
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
     }
 
     @Override
-    public boolean deleteByRoleNo(String roleNo) {
-        return false;
+    public void deleteRole(Long id) {
+        boolean remove = removeById(id);
+        if (!remove) {
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
+        roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getMenuId, id));
     }
 
     @Override
-    public boolean deleteRoleInBatch(List<String> roleNos) {
-        return false;
+    @Transactional
+    public void deleteRoleInBatch(List<Long> roleIds) {
+        if (roleIds.isEmpty()) {
+            return;
+        }
+        boolean remove = removeByIds(roleIds);
+        if (!remove) {
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
+        roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().in(RoleMenu::getRoleId, roleIds));
     }
 
     @Override
-    public List<Menu> getRoleMenus(String roleNo) {
-        return List.of();
+    public List<Menu> getMenusByRoleId(Long roleId) {
+        List<RoleMenu> list = roleMenuService.list(Wrappers.<RoleMenu>lambdaQuery().eq(RoleMenu::getRoleId, roleId));
+        if (list.isEmpty()) {
+            return List.of();
+        }
+        List<Long> menuIds = list.stream().map(RoleMenu::getMenuId).toList();
+        LambdaQueryWrapper<Menu> queryWrapper = Wrappers.lambdaQuery(Menu.class).in(Menu::getId, menuIds);
+        return menuService.list(queryWrapper);
     }
 
     @Override
-    public boolean assignMenu(String roleNo, List<String> menuNos) {
-        return false;
+    public void assignMenu(Long roleId, List<Long> menuIds) {
+        
     }
 
-//    @Override
-//    public boolean editRole(Role role) {
-//        if (StrUtil.isBlank(role.getRoleNo())) {
-//            role.setRoleNo(GeneralUtil.nextIdStr());
-//            role.setCreateTime(LocalDateTime.now());
-//            return save(role);
-//        }
-//        return update(role, new LambdaQueryWrapper<Role>().eq(Role::getRoleNo, role.getRoleNo()));
-//    }
-//
-//    @Override
-//    public Map<String, Object> rolePage(String roleName, String roleCode, String comments, String sort, String order, int page, int limit) {
-//        // 分页
-//        Page<Role> rolePage = new Page<>(page, limit);
-//        // 排序
-//        rolePage.addOrder(new OrderItem(StrUtil.toUnderlineCase(sort), "asc".equalsIgnoreCase(order)));
-//        // 筛选
-//        LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
-//        queryWrapper.like(StrUtil.isNotBlank(roleName), Role::getRoleName, roleName)
-//                .like(StrUtil.isNotBlank(roleCode), Role::getRoleCode, roleCode)
-//                .like(StrUtil.isNotBlank(comments), Role::getComments, comments);
-//
-//        page(rolePage, queryWrapper);
-//        return GeneralUtil.resultPage(rolePage);
-//    }
-//
-//    @Override
-//    public boolean deleteByRoleNo(String roleNo) {
-//        if (StrUtil.isBlank(roleNo)) {
-//            return false;
-//        }
-//        roleMenuService.remove(Wrappers.lambdaQuery(RoleMenu.class).eq(RoleMenu::getRoleNo, roleNo));
-//        return remove(Wrappers.lambdaQuery(Role.class).eq(Role::getRoleNo, roleNo));
-//    }
-//
-//    @Override
-//    public boolean deleteRoleInBatch(List<String> roleNos) {
-//        if (ObjectUtil.isEmpty(roleNos) || roleNos.size() == 0) {
-//            return false;
-//        }
-//        roleMenuService.remove(Wrappers.lambdaQuery(RoleMenu.class).in(RoleMenu::getRoleNo, roleNos));
-//        return remove(Wrappers.lambdaQuery(Role.class).in(Role::getRoleNo, roleNos));
-//    }
-//
-//    @Override
-//    public List<Menu> getRoleMenus(String roleNo) {
-//        // 所有菜单
-//        List<Menu> menuList = menuService.list();
-//        // 该角色拥有的菜单对应No集合
-//        List<String> menuNos = roleMenuService.list(Wrappers.lambdaQuery(RoleMenu.class).select(RoleMenu::getMenuNo).eq(RoleMenu::getRoleNo, roleNo)).stream().map(roleMenu -> roleMenu.getMenuNo()).collect(Collectors.toList());
-//        menuList = menuList.stream().map(menu -> {
-//            if (menuNos.contains(menu.getMenuNo())) {
-//                menu.setChecked(true);
-//            }
-//            return menu;
-//        }).collect(Collectors.toList());
-//        return menuList;
-//    }
-//
-//    @Override
-//    public boolean assignMenu(String roleNo, List<String> menuNos) {
-//        roleMenuService.remove(Wrappers.lambdaQuery(RoleMenu.class).eq(RoleMenu::getRoleNo, roleNo));
-//        List<RoleMenu> roleMenuList = menuNos.stream().map(menuNo -> {
-//            RoleMenu roleMenu = new RoleMenu();
-//            roleMenu.setMenuNo(menuNo);
-//            roleMenu.setRoleNo(roleNo);
-//            return roleMenu;
-//        }).collect(Collectors.toList());
-//        return roleMenuService.saveBatch(roleMenuList);
-//    }
 }
