@@ -24,18 +24,26 @@ public class MenuController {
     private IMenuService menuService;
 
     @GetMapping
-    public ApiResponse<List> menuList(String title, String path, String authority) {
-        return ApiResponse.success(menuService.getMenuList(title, path, authority));
+    public ApiResponse<List<Menu>> menuList(String title, String path, String authority) {
+        List<Menu> menuList = menuService.getMenuList(title, path, authority);
+        return ApiResponse.success(menuList);
     }
 
     @PostMapping
-    public ApiResponse editMenu(@RequestBody Menu menu) {
-        boolean result = menuService.saveMenu(menu);
-        return result ? ApiResponse.success() : ApiResponse.fail();
+    public ApiResponse<Menu> createMenu(@RequestBody Menu menu) {
+        boolean saved = menuService.save(menu);
+        return saved ? ApiResponse.success() : ApiResponse.fail();
     }
 
-    @DeleteMapping("/{menuNo}")
-    public ApiResponse deleteMenu(@PathVariable String menuNo) {
-        return menuService.deleteMenu(menuNo);
+    @PutMapping
+    public ApiResponse<Menu> updateMenu(@RequestBody Menu menu) {
+        menuService.updateMenu(menu);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Menu> deleteMenu(@PathVariable Long id) {
+        menuService.deleteMenu(id);
+        return ApiResponse.success();
     }
 }

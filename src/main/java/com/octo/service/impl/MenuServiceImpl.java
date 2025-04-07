@@ -1,12 +1,20 @@
 package com.octo.service.impl;
 
+import com.alibaba.excel.util.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.octo.entity.Menu;
+import com.octo.entity.RoleMenu;
+import com.octo.enums.ResponseCodeEnums;
+import com.octo.exception.CustomException;
 import com.octo.mapper.MenuMapper;
 import com.octo.service.IMenuService;
 import com.octo.service.IRoleMenuService;
-import com.octo.util.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,6 +27,7 @@ import java.util.List;
  * @author zms
  * @since 2023-11-23
  */
+@Slf4j
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
 
@@ -26,48 +35,47 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     private IRoleMenuService roleMenuService;
 
     @Override
-    public boolean saveMenu(Menu menu) {
-        return false;
-    }
-
-    @Override
     public List<Menu> getMenuList(String title, String path, String authority) {
-        return List.of();
+        LambdaQueryWrapper<Menu> queryWrapper = Wrappers.lambdaQuery(Menu.class)
+                .eq(StringUtils.isNotBlank(title), Menu::getTitle, title)
+                .eq(StringUtils.isNotBlank(path), Menu::getPath, path)
+                .eq(StringUtils.isNotBlank(authority), Menu::getAuthority, authority);
+        return list(queryWrapper);
     }
 
     @Override
-    public ApiResponse deleteMenu(String menuNo) {
-        return null;
+    public void updateMenu(Menu menu) {
+        if (menu.getId() == null) {
+            throw new CustomException(500, "菜单不存在");
+        }
+        if (menu.getId().equals(menu.getParentId())) {
+            throw new CustomException(500, "父级菜单不能是自己");
+        }
+        LambdaUpdateWrapper<Menu> updateWrapper = Wrappers.lambdaUpdate(Menu.class)
+                .eq(Menu::getId, menu.getId())
+                .set(Menu::getParentId, menu.getParentId())
+                .set(Menu::getMenuType, menu.getMenuType())
+                .set(Menu::getTitle, menu.getTitle())
+                .set(Menu::getIcon, menu.getIcon())
+                .set(Menu::getAuthority, menu.getAuthority())
+                .set(Menu::getPath, menu.getPath())
+                .set(Menu::getSortNumber, menu.getSortNumber())
+                .set(Menu::getComponent, menu.getComponent())
+                .set(Menu::getHide, menu.getHide())
+                .set(Menu::getMeta, menu.getMeta());
+        boolean update = update(new Menu(), updateWrapper);
+        if (!update) {
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
     }
 
-//    @Override
-//    public boolean saveMenu(Menu menu) {
-//        if (StrUtil.isEmpty(menu.getMenuNo())) {
-//            menu.setMenuNo(GeneralUtil.nextIdStr());
-//            return save(menu);
-//        }
-//        return update(menu, new LambdaUpdateWrapper<Menu>().eq(Menu::getMenuNo, menu.getMenuNo()));
-//    }
-//
-//    @Override
-//    public List<Menu> getMenuList(String title, String path, String authority) {
-//        LambdaQueryWrapper<Menu> queryWrapper = Wrappers.lambdaQuery(Menu.class)
-//                .like(StrUtil.isNotBlank(title), Menu::getTitle, title)
-//                .like(StrUtil.isNotBlank(path), Menu::getPath, path)
-//                .like(StrUtil.isNotBlank(authority), Menu::getAuthority, authority);
-//        return list(queryWrapper);
-//    }
-//
-//    @Override
-//    public ApiResponse deleteMenu(String menuNo) {
-//        if (StrUtil.isBlank(menuNo)) {
-//            return ApiResponse.fail();
-//        }
-//        List<RoleMenu> list = roleMenuService.list(Wrappers.lambdaQuery(RoleMenu.class).eq(RoleMenu::getMenuNo, menuNo));
-//        if (list.size() > 0) {
-//            return ApiResponse.fail("请先与角色解绑");
-//        }
-//        boolean result = remove(new LambdaQueryWrapper<Menu>().eq(Menu::getMenuNo, menuNo));
-//        return result ? ApiResponse.success() : ApiResponse.fail();
-//    }
+    @Override
+    @Transactional
+    public void deleteMenu(Long id) {
+        boolean remove = removeById(id);
+        if (!remove) {
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
+        roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getMenuId, id));
+    }
 }
