@@ -40,7 +40,7 @@ public class Organization implements Serializable {
     /**
      * 机构类型
      */
-    private Integer organizationType;
+    private String organizationType;
 
     /**
      * 机构代码

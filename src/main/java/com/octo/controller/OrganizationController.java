@@ -18,7 +18,7 @@ import java.util.List;
  * @since 2025-04-02
  */
 @RestController
-@RequestMapping("/organization")
+@RequestMapping("/system/organization")
 public class OrganizationController {
 
     @Autowired

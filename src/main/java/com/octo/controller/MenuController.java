@@ -18,7 +18,7 @@ import java.util.List;
  * @since 2023-11-23
  */
 @RestController
-@RequestMapping("/menu")
+@RequestMapping("/system/menu")
 public class MenuController {
     @Resource
     private IMenuService menuService;

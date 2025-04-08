@@ -37,9 +37,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     @Override
     public List<Menu> getMenuList(String title, String path, String authority) {
         LambdaQueryWrapper<Menu> queryWrapper = Wrappers.lambdaQuery(Menu.class)
-                .eq(StringUtils.isNotBlank(title), Menu::getTitle, title)
-                .eq(StringUtils.isNotBlank(path), Menu::getPath, path)
-                .eq(StringUtils.isNotBlank(authority), Menu::getAuthority, authority);
+                .like(StringUtils.isNotBlank(title), Menu::getTitle, title)
+                .like(StringUtils.isNotBlank(path), Menu::getPath, path)
+                .like(StringUtils.isNotBlank(authority), Menu::getAuthority, authority);
         return list(queryWrapper);
     }
 

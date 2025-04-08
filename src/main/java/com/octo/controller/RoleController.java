@@ -21,22 +21,28 @@ import static com.baomidou.mybatisplus.extension.toolkit.Db.save;
  * @since 2023-11-23
  */
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/system/role")
 public class RoleController {
 
     @Resource
     private IRoleService roleService;
 
     @GetMapping("/page")
-    public ApiResponse<PageResult<Role>> getRoles(Role role,
-                                                  @RequestParam(name = "page", defaultValue = "1") int pageNum,
-                                                  @RequestParam(name = "limit", defaultValue = "10") int pageSize) {
+    public ApiResponse<PageResult<Role>> pageRoles(Role role,
+                                                   @RequestParam(name = "page", defaultValue = "1") int pageNum,
+                                                   @RequestParam(name = "limit", defaultValue = "10") int pageSize) {
         PageResult<Role> roles = roleService.pageRole(role, pageNum, pageSize);
         return ApiResponse.success(roles);
     }
 
+    @GetMapping
+    public ApiResponse<List<Role>> listRoles() {
+        List<Role> list = roleService.list();
+        return ApiResponse.success(list);
+    }
+
     @PostMapping
-    public ApiResponse<Role> addRole(@RequestBody Role role) {
+    public ApiResponse<Role> createRole(@RequestBody Role role) {
         boolean save = save(role);
         return save ? ApiResponse.success() : ApiResponse.fail();
     }

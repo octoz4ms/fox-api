@@ -6,10 +6,7 @@ import com.octo.entity.User;
 import com.octo.service.IUserService;
 import com.octo.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -20,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024-07-02
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/system/user")
 public class UserController {
 
     @Autowired
@@ -32,5 +29,17 @@ public class UserController {
                                                    @RequestParam(name = "limit", defaultValue = "10") Integer pageSize) {
         PageResult<User> users = userService.pageUsers(user, pageNum, pageSize);
         return ApiResponse.success(users);
+    }
+
+    @PostMapping
+    public ApiResponse<User> createUser(@RequestBody User user) {
+        userService.createUser(user);
+        return ApiResponse.success();
+    }
+
+    @PutMapping
+    public ApiResponse<User> updateUser(@RequestBody User user) {
+        userService.updateUser(user);
+        return ApiResponse.success();
     }
 }

@@ -16,6 +16,7 @@ import com.octo.mapper.RoleMapper;
 import com.octo.service.IMenuService;
 import com.octo.service.IRoleMenuService;
 import com.octo.service.IRoleService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import java.util.List;
  * @author zms
  * @since 2023-11-23
  */
+@Slf4j
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
     @Resource
@@ -93,17 +95,24 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public List<Menu> getMenusByRoleId(Long roleId) {
         List<RoleMenu> list = roleMenuService.list(Wrappers.<RoleMenu>lambdaQuery().eq(RoleMenu::getRoleId, roleId));
-        if (list.isEmpty()) {
-            return List.of();
-        }
         List<Long> menuIds = list.stream().map(RoleMenu::getMenuId).toList();
-        LambdaQueryWrapper<Menu> queryWrapper = Wrappers.lambdaQuery(Menu.class).in(Menu::getId, menuIds);
-        return menuService.list(queryWrapper);
+        return menuService.list().stream().peek(menu -> {
+            boolean checked = menuIds.contains(menu.getId());
+            menu.setChecked(checked);
+        }).toList();
     }
 
     @Override
+    @Transactional
     public void assignMenu(Long roleId, List<Long> menuIds) {
-        
+        // 删除原有权限
+        roleMenuService.removeById(roleId);
+        // 批量插入新权限
+        if (menuIds.isEmpty()) {
+            return;
+        }
+        List<RoleMenu> roleMenus = menuIds.stream().map(id -> new RoleMenu().setRoleId(roleId).setMenuId(id)).toList();
+        RoleServiceImpl.log.info("roleMenus:{}", roleMenus);
+        roleMenuService.saveBatch(roleMenus);
     }
-
 }

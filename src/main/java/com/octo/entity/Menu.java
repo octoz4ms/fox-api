@@ -82,6 +82,7 @@ public class Menu implements Serializable {
      */
     private Integer openType;
 
+
     /**
      * 删除标识：0未删除，1已删除
      */
@@ -99,6 +100,12 @@ public class Menu implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
+
+    /**
+     * 是否选中
+     */
+    @TableField(exist = false)
+    private Boolean checked;
 
 
 }

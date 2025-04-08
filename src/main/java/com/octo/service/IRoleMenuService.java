@@ -1,11 +1,11 @@
 package com.octo.service;
 
-import com.octo.entity.RoleMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.octo.entity.RoleMenu;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author zms

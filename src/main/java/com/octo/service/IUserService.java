@@ -19,4 +19,8 @@ public interface IUserService extends IService<User> {
     void importExcel(MultipartFile file);
 
     PageResult<User> pageUsers(User user, Integer pageNum, Integer pageSize);
+
+    void createUser(User user);
+
+    void updateUser(User user);
 }

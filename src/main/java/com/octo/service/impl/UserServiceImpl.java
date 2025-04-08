@@ -3,17 +3,21 @@ package com.octo.service.impl;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.octo.dto.response.PageResult;
 import com.octo.entity.*;
+import com.octo.enums.ResponseCodeEnums;
+import com.octo.exception.CustomException;
 import com.octo.listener.UserExcelListener;
 import com.octo.mapper.UserMapper;
 import com.octo.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -113,17 +117,68 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             List<UserRole> userRoles = userRoleService.list(Wrappers.lambdaQuery(UserRole.class)
                     .select(UserRole::getRoleId)
                     .eq(UserRole::getUserId, u.getId()));
-            log.error("userRole:{}", userRoles);
-            if(!userRoles.isEmpty()){
+            UserServiceImpl.log.error("userRole:{}", userRoles);
+            if (!userRoles.isEmpty()) {
                 List<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
-                log.error("roleIds:{}",roleIds);
+                UserServiceImpl.log.error("roleIds:{}", roleIds);
                 List<Role> roles = roleService.list(Wrappers.lambdaQuery(Role.class).in(Role::getId, roleIds));
 
                 u.setRoles(roles);
-            }else{
+            } else {
                 u.setRoles(List.of());
             }
         });
         return new PageResult<>(userPage);
+    }
+
+    @Override
+    @Transactional
+    public void createUser(User user) {
+        boolean save = save(user);
+        if (!save) {
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
+        if (user.getRoles().isEmpty()) {
+            return;
+        }
+        saveUserRoles(user.getId(), user.getRoles());
+    }
+
+    @Override
+    @Transactional
+    public void updateUser(User user) {
+        if (user.getId() == null) {
+            throw new CustomException(500, "用户不存在");
+        }
+        LambdaUpdateWrapper<User> updateWrapper = Wrappers.lambdaUpdate(User.class)
+                .eq(User::getId, user.getId())
+                .set(User::getOrganizationId, user.getOrganizationId())
+                .set(User::getPhone, user.getPhone())
+                .set(User::getBirthday, user.getBirthday())
+                .set(User::getNickname, user.getNickname())
+                .set(User::getStatus, user.getStatus())
+                .set(User::getSex, user.getSex())
+                .set(User::getDescription, user.getDescription())
+                .set(User::getEmail, user.getEmail());
+
+        boolean update = update(new User(), updateWrapper);
+        if (!update) {
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
+        // 删除用户角色联系
+        userRoleService.remove(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getUserId, user.getId()));
+        // 重新建立角色联系
+        saveUserRoles(user.getId(), user.getRoles());
+    }
+
+
+    public void saveUserRoles(Long userId, List<Role> roles) {
+        List<UserRole> userRoles = roles.stream().map(role -> {
+            UserRole userRole = new UserRole();
+            userRole.setUserId(userId);
+            userRole.setRoleId(role.getId());
+            return userRole;
+        }).toList();
+        userRoleService.saveBatch(userRoles);
     }
 }
