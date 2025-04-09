@@ -12,13 +12,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ApiResponse<Object> handleException(Exception e) {
         // 处理异常并返回包含错误信息的响应体对象
-        log.error(e.getMessage());
-        return ApiResponse.fail(500, e.getMessage());
+        GlobalExceptionHandler.log.error(e.getMessage());
+        return ApiResponse.fail();
     }
 
     @ExceptionHandler(CustomException.class)
     public ApiResponse<Object> handleCustomException(CustomException ex) {
-        log.error(ex.getMessage());
+        GlobalExceptionHandler.log.error(ex.getMessage());
         return ApiResponse.fail(ex.getCode(), ex.getMessage());
     }
 }

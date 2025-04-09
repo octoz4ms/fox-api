@@ -5,6 +5,8 @@ import com.octo.dto.response.PageResult;
 import com.octo.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户表 服务类
@@ -23,4 +25,6 @@ public interface IUserService extends IService<User> {
     void createUser(User user);
 
     void updateUser(User user);
+
+    void deleteUsersByIds(List<Long> ids);
 }

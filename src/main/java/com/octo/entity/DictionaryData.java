@@ -6,23 +6,21 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * <p>
- * 用户表
+ * 字典数据表
  * </p>
  *
  * @author zms
- * @since 2025-04-05
+ * @since 2025-04-09
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("tb_user")
-public class User implements Serializable {
+@TableName("tb_dictionary_data")
+public class DictionaryData implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,54 +28,29 @@ public class User implements Serializable {
     private Long id;
 
     /**
-     * 账号
+     * 字典数据名
      */
-    private String username;
+    private String dictDataName;
 
     /**
-     * 密码
+     * 字典数据值
      */
-    private String password;
+    private String dictDataCode;
 
     /**
-     * 昵称
+     * 排序
      */
-    private String nickname;
+    private Integer sortNumber;
 
     /**
-     * 手机号
+     * 备注
      */
-    private String phone;
+    private String comments;
 
     /**
-     * 邮箱
+     * 字典ID
      */
-    private String email;
-
-    /**
-     * 出生日期
-     */
-    private LocalDate birthday;
-
-    /**
-     * 性别：1男，2女
-     */
-    private String sex;
-
-    /**
-     * 简介
-     */
-    private String description;
-
-    /**
-     * 状态：0有效，1无效
-     */
-    private Integer status;
-
-    /**
-     * 机构ID
-     */
-    private Long organizationId;
+    private Long dictId;
 
     /**
      * 删除标识：0未删除，1已删除
@@ -97,10 +70,5 @@ public class User implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
-    @TableField(exist = false)
-    private List<Role> roles;
-
-    @TableField(exist = false)
-    private List<Menu> authorities;
 
 }

@@ -8,6 +8,8 @@ import com.octo.util.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * 用户表 前端控制器
@@ -40,6 +42,18 @@ public class UserController {
     @PutMapping
     public ApiResponse<User> updateUser(@RequestBody User user) {
         userService.updateUser(user);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<User> deleteUser(@PathVariable Long id) {
+        userService.removeById(id);
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/batch")
+    public ApiResponse<User> deleteUsers(@RequestBody List<Long> ids) {
+        userService.deleteUsersByIds(ids);
         return ApiResponse.success();
     }
 }

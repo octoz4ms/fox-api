@@ -117,12 +117,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             List<UserRole> userRoles = userRoleService.list(Wrappers.lambdaQuery(UserRole.class)
                     .select(UserRole::getRoleId)
                     .eq(UserRole::getUserId, u.getId()));
-            UserServiceImpl.log.error("userRole:{}", userRoles);
             if (!userRoles.isEmpty()) {
                 List<Long> roleIds = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
-                UserServiceImpl.log.error("roleIds:{}", roleIds);
                 List<Role> roles = roleService.list(Wrappers.lambdaQuery(Role.class).in(Role::getId, roleIds));
-
                 u.setRoles(roles);
             } else {
                 u.setRoles(List.of());
@@ -134,11 +131,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     @Transactional
     public void createUser(User user) {
+        if (user == null) {
+            throw new CustomException(500, "用户信息不能为空");
+        }
+
         boolean save = save(user);
         if (!save) {
             throw new CustomException(ResponseCodeEnums.FAIL);
         }
-        if (user.getRoles().isEmpty()) {
+
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
             return;
         }
         saveUserRoles(user.getId(), user.getRoles());
@@ -148,8 +150,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Transactional
     public void updateUser(User user) {
         if (user.getId() == null) {
-            throw new CustomException(500, "用户不存在");
+            throw new CustomException(500, "id不能为空");
         }
+
         LambdaUpdateWrapper<User> updateWrapper = Wrappers.lambdaUpdate(User.class)
                 .eq(User::getId, user.getId())
                 .set(User::getOrganizationId, user.getOrganizationId())
@@ -160,15 +163,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .set(User::getSex, user.getSex())
                 .set(User::getDescription, user.getDescription())
                 .set(User::getEmail, user.getEmail());
-
         boolean update = update(new User(), updateWrapper);
+
         if (!update) {
+            User existing = getById(user.getId());
+            if (existing == null) {
+                throw new CustomException(500, "用户不存在");
+            }
             throw new CustomException(ResponseCodeEnums.FAIL);
         }
-        // 删除用户角色联系
+
+        // 删除并重新关联角色
         userRoleService.remove(Wrappers.lambdaQuery(UserRole.class).eq(UserRole::getUserId, user.getId()));
-        // 重新建立角色联系
         saveUserRoles(user.getId(), user.getRoles());
+    }
+
+    @Override
+    @Transactional
+    public void deleteUsersByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new CustomException(500, "请至少选择一条数据");
+        }
+        removeBatchByIds(ids);
     }
 
 
@@ -179,6 +195,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             userRole.setRoleId(role.getId());
             return userRole;
         }).toList();
-        userRoleService.saveBatch(userRoles);
+        boolean saved = userRoleService.saveBatch(userRoles);
+        if (!saved) {
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
     }
 }
