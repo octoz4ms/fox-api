@@ -27,9 +27,11 @@ public class UserController {
 
     @GetMapping("/page")
     public ApiResponse<PageResult<User>> pageUsers(User user,
+                                                   @RequestParam(name = "sort", required = false) String sortField,
+                                                   @RequestParam(name = "order", required = false) String sortOrder,
                                                    @RequestParam(name = "page", defaultValue = "1") Integer pageNum,
                                                    @RequestParam(name = "limit", defaultValue = "10") Integer pageSize) {
-        PageResult<User> users = userService.pageUsers(user, pageNum, pageSize);
+        PageResult<User> users = userService.pageUsers(user, sortField, sortOrder, pageNum, pageSize);
         return ApiResponse.success(users);
     }
 
@@ -56,4 +58,18 @@ public class UserController {
         userService.deleteUsersByIds(ids);
         return ApiResponse.success();
     }
+
+    @GetMapping("/existence")
+    public ApiResponse<List<User>> existenceUser(String field, String value) {
+        boolean existing = userService.existenceUser(field, value);
+        return existing ? ApiResponse.success() : ApiResponse.fail();
+    }
+
+    @PutMapping("/password")
+    public ApiResponse<User> resetPassword(@RequestBody User user) {
+        userService.resetPassword(user);
+        return ApiResponse.success();
+    }
+
+
 }

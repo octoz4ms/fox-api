@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface IMenuService extends IService<Menu> {
 
-    List<Menu> getMenuList(String title, String path, String authority);
+    List<Menu> listMenus(String title, String path, String authority);
 
     void updateMenu(Menu menu);
 

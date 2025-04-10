@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface IOrganizationService extends IService<Organization> {
 
-    List<Organization> listOrganizations(String organizationName, Integer organizationType);
+    List<Organization> listOrganizations(Organization organization, String sortField, String sortOrder);
 
     void updateOrganization(Organization organization);
 

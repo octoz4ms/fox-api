@@ -24,8 +24,8 @@ public class MenuController {
     private IMenuService menuService;
 
     @GetMapping
-    public ApiResponse<List<Menu>> menuList(String title, String path, String authority) {
-        List<Menu> menuList = menuService.getMenuList(title, path, authority);
+    public ApiResponse<List<Menu>> listMenus(String title, String path, String authority) {
+        List<Menu> menuList = menuService.listMenus(title, path, authority);
         return ApiResponse.success(menuList);
     }
 

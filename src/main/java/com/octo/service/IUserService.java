@@ -20,11 +20,15 @@ public interface IUserService extends IService<User> {
 
     void importExcel(MultipartFile file);
 
-    PageResult<User> pageUsers(User user, Integer pageNum, Integer pageSize);
+    PageResult<User> pageUsers(User user, String sortField, String sortOrder, Integer pageNum, Integer pageSize);
 
     void createUser(User user);
 
     void updateUser(User user);
 
     void deleteUsersByIds(List<Long> ids);
+
+    boolean existenceUser(String field, String value);
+
+    void resetPassword(User user);
 }

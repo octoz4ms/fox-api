@@ -1,7 +1,10 @@
 package com.octo.service;
 
-import com.octo.entity.DictionaryData;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.octo.dto.response.PageResult;
+import com.octo.entity.DictionaryData;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IDictionaryDataService extends IService<DictionaryData> {
 
+    PageResult<DictionaryData> pageDictionaryData(DictionaryData dictionaryData, String sortField, String sortOrder, int pageNum, int pageSize);
+
+    void updateDictionaryData(DictionaryData dictionaryData);
+
+    void batchDeleteDictionaryData(List<Long> ids);
 }

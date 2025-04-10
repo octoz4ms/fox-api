@@ -29,9 +29,11 @@ public class RoleController {
 
     @GetMapping("/page")
     public ApiResponse<PageResult<Role>> pageRoles(Role role,
+                                                   @RequestParam(name = "sort", required = false) String sortField,
+                                                   @RequestParam(name = "order", required = false) String sortOrder,
                                                    @RequestParam(name = "page", defaultValue = "1") int pageNum,
                                                    @RequestParam(name = "limit", defaultValue = "10") int pageSize) {
-        PageResult<Role> roles = roleService.pageRole(role, pageNum, pageSize);
+        PageResult<Role> roles = roleService.pageRole(role, sortField, sortOrder, pageNum, pageSize);
         return ApiResponse.success(roles);
     }
 

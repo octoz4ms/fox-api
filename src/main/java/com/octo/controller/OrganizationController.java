@@ -25,8 +25,10 @@ public class OrganizationController {
     private IOrganizationService organizationService;
 
     @GetMapping
-    public ApiResponse<?> listOrganizations(String organizationName, Integer organizationType) {
-        List<Organization> organizations = organizationService.listOrganizations(organizationName, organizationType);
+    public ApiResponse<?> listOrganizations(Organization organization,
+                                            @RequestParam(name = "sort", required = false) String sortField,
+                                            @RequestParam(name = "order", required = false) String sortOrder) {
+        List<Organization> organizations = organizationService.listOrganizations(organization, sortField, sortOrder);
         return ApiResponse.success(organizations);
     }
 

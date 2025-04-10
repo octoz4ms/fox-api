@@ -4,6 +4,7 @@ import com.alibaba.excel.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.octo.entity.Organization;
 import com.octo.enums.ResponseCodeEnums;
@@ -12,6 +13,7 @@ import com.octo.mapper.OrganizationMapper;
 import com.octo.service.IOrganizationService;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,10 +28,27 @@ import java.util.List;
 public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Organization> implements IOrganizationService {
 
     @Override
-    public List<Organization> listOrganizations(String organizationName, Integer organizationType) {
+    public List<Organization> listOrganizations(Organization organization, String sortField, String sortOrder) {
+        // 条件构建
         LambdaQueryWrapper<Organization> queryWrapper = Wrappers.lambdaQuery(Organization.class)
-                .eq(StringUtils.isNotBlank(organizationName), Organization::getOrganizationName, organizationName)
-                .eq(organizationType != null, Organization::getOrganizationType, organizationType);
+                .like(StringUtils.isNotBlank(organization.getOrganizationName()), Organization::getOrganizationName, organization.getOrganizationName())
+                .eq(organization.getOrganizationType() != null, Organization::getOrganizationType, organization.getOrganizationType());
+
+        // 动态排序
+        HashMap<String, SFunction<Organization, ?>> allowedSortFields = new HashMap<>();
+        allowedSortFields.put("organizationName", Organization::getOrganizationName);
+        allowedSortFields.put("createTime", Organization::getCreateTime);
+        if (StringUtils.isNotBlank(sortField) && StringUtils.isNotBlank(sortOrder)) {
+            SFunction<Organization, ?> field = allowedSortFields.get(sortField);
+            if ("asc".equalsIgnoreCase(sortOrder)) {
+                queryWrapper.orderByAsc(field);
+            } else if ("desc".equalsIgnoreCase(sortOrder)) {
+                queryWrapper.orderByDesc(field);
+            }
+        } else {
+            queryWrapper.orderByAsc(Organization::getSortNumber);
+        }
+
         return list(queryWrapper);
     }
 

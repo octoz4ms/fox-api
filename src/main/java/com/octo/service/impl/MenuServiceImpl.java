@@ -35,11 +35,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     private IRoleMenuService roleMenuService;
 
     @Override
-    public List<Menu> getMenuList(String title, String path, String authority) {
+    public List<Menu> listMenus(String title, String path, String authority) {
         LambdaQueryWrapper<Menu> queryWrapper = Wrappers.lambdaQuery(Menu.class)
                 .like(StringUtils.isNotBlank(title), Menu::getTitle, title)
                 .like(StringUtils.isNotBlank(path), Menu::getPath, path)
-                .like(StringUtils.isNotBlank(authority), Menu::getAuthority, authority);
+                .like(StringUtils.isNotBlank(authority), Menu::getAuthority, authority)
+                .orderByAsc(Menu::getSortNumber);
         return list(queryWrapper);
     }
 

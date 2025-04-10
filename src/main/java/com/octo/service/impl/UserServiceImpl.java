@@ -5,6 +5,7 @@ import com.alibaba.excel.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.octo.dto.response.PageResult;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,7 +102,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public PageResult<User> pageUsers(User user, Integer pageNum, Integer pageSize) {
+    public PageResult<User> pageUsers(User user, String sortField, String sortOrder, Integer pageNum, Integer pageSize) {
         // 分页参数
         Page<User> page = new Page<>(pageNum, pageSize);
 
@@ -110,6 +112,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .like(StringUtils.isNotBlank(user.getNickname()), User::getNickname, user.getNickname())
                 .eq(user.getSex() != null, User::getSex, user.getSex())
                 .eq(user.getOrganizationId() != null, User::getOrganizationId, user.getOrganizationId());
+
+        // 动态排序
+        HashMap<String, SFunction<User, ?>> allowedSortFields = new HashMap<>();
+        allowedSortFields.put("username", User::getUsername);
+        allowedSortFields.put("nickname", User::getNickname);
+        allowedSortFields.put("sexName", User::getSex);
+        allowedSortFields.put("createTime", User::getCreateTime);
+        allowedSortFields.put("status", User::getStatus);
+        if (StringUtils.isNotBlank(sortField) && StringUtils.isNotBlank(sortOrder)) {
+            SFunction<User, ?> field = allowedSortFields.get(sortField);
+            if ("asc".equalsIgnoreCase(sortOrder)) {
+                queryWrapper.orderByAsc(field);
+            } else if ("desc".equalsIgnoreCase(sortOrder)) {
+                queryWrapper.orderByDesc(field);
+            }
+        } else {
+            queryWrapper.orderByDesc(User::getCreateTime);
+        }
         Page<User> userPage = page(page, queryWrapper);
 
         // 查询角色
@@ -185,6 +205,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             throw new CustomException(500, "请至少选择一条数据");
         }
         removeBatchByIds(ids);
+    }
+
+    @Override
+    public boolean existenceUser(String field, String value) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>(User.class);
+        switch (field) {
+            case "username":
+                queryWrapper.eq(User::getUsername, value);
+                break;
+            case "nickname":
+                queryWrapper.eq(User::getNickname, value);
+            case "phone":
+                queryWrapper.eq(User::getPhone, value);
+        }
+        User user = getOne(queryWrapper);
+        return user != null;
+    }
+
+    @Override
+    public void resetPassword(User user) {
+        if (user.getId() == null) {
+            throw new CustomException(500, "id不能为空");
+        }
+
+        LambdaUpdateWrapper<User> updateWrapper = Wrappers.lambdaUpdate(User.class)
+                .eq(User::getId, user.getId())
+                .set(User::getPassword, user.getPassword());
+        boolean update = update(new User(), updateWrapper);
+
+        if (!update) {
+            User existing = getById(user.getId());
+            if (existing == null) {
+                throw new CustomException(500, "用户不存在");
+            }
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
     }
 
 

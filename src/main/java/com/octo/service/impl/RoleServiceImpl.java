@@ -4,6 +4,7 @@ import com.alibaba.excel.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.octo.dto.response.PageResult;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -40,7 +42,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     private IMenuService menuService;
 
     @Override
-    public PageResult<Role> pageRole(Role role, int pageNum, int pageSize) {
+    public PageResult<Role> pageRole(Role role, String sortField, String sortOrder, int pageNum, int pageSize) {
         // 分页
         Page<Role> page = new Page<>(pageNum, pageSize);
 
@@ -49,6 +51,23 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
                 .like(StringUtils.isNotBlank(role.getRoleName()), Role::getRoleName, role.getRoleName())
                 .like(StringUtils.isNotBlank(role.getRoleCode()), Role::getRoleCode, role.getRoleCode());
 
+        // 动态排序
+        HashMap<String, SFunction<Role, ?>> allowedSortFields = new HashMap<>();
+        allowedSortFields.put("roleName", Role::getRoleName);
+        allowedSortFields.put("roleCode", Role::getRoleCode);
+        allowedSortFields.put("comments", Role::getComments);
+        allowedSortFields.put("createTime", Role::getCreateTime);
+        if (StringUtils.isNotBlank(sortField) && StringUtils.isNotBlank(sortOrder)) {
+            SFunction<Role, ?> field = allowedSortFields.get(sortField);
+            if ("asc".equalsIgnoreCase(sortOrder)) {
+                queryWrapper.orderByAsc(field);
+            } else if ("desc".equalsIgnoreCase(sortOrder)) {
+                queryWrapper.orderByDesc(field);
+            }
+        } else {
+            queryWrapper.orderByDesc(Role::getCreateTime);
+        }
+
         Page<Role> rolePage = page(page, queryWrapper);
         return new PageResult<>(rolePage);
     }
@@ -56,14 +75,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public void updateRole(Role role) {
         if (role.getId() == null) {
-            throw new CustomException(500, "该角色不存在");
+            throw new CustomException(500, "id不能为空");
         }
         LambdaUpdateWrapper<Role> updateWrapper = Wrappers.lambdaUpdate(Role.class)
                 .eq(Role::getId, role.getId())
                 .set(Role::getRoleName, role.getRoleName())
                 .set(Role::getRoleCode, role.getRoleCode())
                 .set(Role::getComments, role.getComments());
-
         boolean update = update(new Role(), updateWrapper);
         if (!update) {
             throw new CustomException(ResponseCodeEnums.FAIL);

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface IRoleService extends IService<Role> {
 
-    PageResult<Role> pageRole(Role role, int pageNum, int pageSize);
+    PageResult<Role> pageRole(Role role, String sortField, String sortOrder, int pageNum, int pageSize);
 
     void updateRole(Role role);
 

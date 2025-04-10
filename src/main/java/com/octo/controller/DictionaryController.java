@@ -32,8 +32,8 @@ public class DictionaryController {
 
     @PostMapping
     public ApiResponse<Dictionary> createDictionary(@RequestBody Dictionary dictionary) {
-        boolean save = dictionaryService.save(dictionary);
-        return save ? ApiResponse.success() : ApiResponse.fail();
+        dictionaryService.save(dictionary);
+        return ApiResponse.success();
     }
 
     @PutMapping
@@ -47,5 +47,4 @@ public class DictionaryController {
         dictionaryService.removeById(id);
         return ApiResponse.success();
     }
-
 }
