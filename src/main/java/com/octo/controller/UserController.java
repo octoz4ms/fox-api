@@ -71,5 +71,9 @@ public class UserController {
         return ApiResponse.success();
     }
 
-
+    @PutMapping("/status")
+    public ApiResponse<User> updateStatus(@RequestBody User user) {
+        userService.updateStatus(user.getId(), user.getStatus());
+        return ApiResponse.success();
+    }
 }

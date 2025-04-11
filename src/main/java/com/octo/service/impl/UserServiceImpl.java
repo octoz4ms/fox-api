@@ -48,6 +48,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private IUserRoleService userRoleService;
     @Resource
     private IRoleService roleService;
+    @Resource
+    private IOrganizationService organizationService;
 
     @Override
     public User getUserByUsername(String username) {
@@ -106,12 +108,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 分页参数
         Page<User> page = new Page<>(pageNum, pageSize);
 
+        // 查询机构及其子机构ID
+        List<Long> organizationIds = organizationService.getOrgAndSubOrgIds(user.getOrganizationId());
+
         // 动态条件构建
         LambdaQueryWrapper<User> queryWrapper = Wrappers.lambdaQuery(User.class)
                 .like(StringUtils.isNotBlank(user.getUsername()), User::getUsername, user.getUsername())
                 .like(StringUtils.isNotBlank(user.getNickname()), User::getNickname, user.getNickname())
                 .eq(user.getSex() != null, User::getSex, user.getSex())
-                .eq(user.getOrganizationId() != null, User::getOrganizationId, user.getOrganizationId());
+                .in(!organizationIds.isEmpty(), User::getOrganizationId, organizationIds);
 
         // 动态排序
         HashMap<String, SFunction<User, ?>> allowedSortFields = new HashMap<>();
@@ -243,6 +248,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
     }
 
+    @Override
+    public void updateStatus(Long userId, Integer status) {
+        LambdaUpdateWrapper<User> updateWrapper = Wrappers.lambdaUpdate(User.class)
+                .eq(User::getId, userId)
+                .set(User::getStatus, status);
+        boolean update = update(new User(), updateWrapper);
+        if (!update) {
+            User existing = getById(userId);
+            if (existing == null) {
+                throw new CustomException(500, "用户不存在");
+            }
+            throw new CustomException(ResponseCodeEnums.FAIL);
+        }
+    }
 
     public void saveUserRoles(Long userId, List<Role> roles) {
         List<UserRole> userRoles = roles.stream().map(role -> {

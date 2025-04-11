@@ -35,6 +35,12 @@ public class DictionaryDataController {
         return ApiResponse.success(data);
     }
 
+    @GetMapping
+    public ApiResponse<List<DictionaryData>> listDictionaryData(@RequestParam(required = false) String dictCode) {
+        List<DictionaryData> data = dictionaryDataService.listDictionaryData(dictCode);
+        return ApiResponse.success(data);
+    }
+
     @PostMapping
     public ApiResponse<DictionaryData> addDictionaryData(@RequestBody DictionaryData dictionaryData) {
         dictionaryDataService.save(dictionaryData);

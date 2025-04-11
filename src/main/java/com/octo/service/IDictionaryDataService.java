@@ -18,7 +18,10 @@ public interface IDictionaryDataService extends IService<DictionaryData> {
 
     PageResult<DictionaryData> pageDictionaryData(DictionaryData dictionaryData, String sortField, String sortOrder, int pageNum, int pageSize);
 
+    List<DictionaryData> listDictionaryData(String dictCode);
+
     void updateDictionaryData(DictionaryData dictionaryData);
 
     void batchDeleteDictionaryData(List<Long> ids);
+
 }

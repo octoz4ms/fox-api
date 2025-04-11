@@ -19,4 +19,6 @@ public interface IOrganizationService extends IService<Organization> {
 
     void updateOrganization(Organization organization);
 
+    List<Long> getOrgAndSubOrgIds(Long organizationId);
+
 }

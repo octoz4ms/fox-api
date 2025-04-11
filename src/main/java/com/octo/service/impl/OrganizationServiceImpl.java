@@ -13,6 +13,7 @@ import com.octo.mapper.OrganizationMapper;
 import com.octo.service.IOrganizationService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,6 +70,27 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
         boolean update = update(new Organization(), updateWrapper);
         if (!update) {
             throw new CustomException(ResponseCodeEnums.FAIL);
+        }
+    }
+
+    @Override
+    public List<Long> getOrgAndSubOrgIds(Long organizationId) {
+        List<Long> result = new ArrayList<>();
+        collectOrgIds(organizationId, result);
+        return result;
+    }
+
+    private void collectOrgIds(Long parentId, List<Long> result) {
+        // 包含当前机构
+        result.add(parentId);
+
+        // 查子机构
+        LambdaQueryWrapper<Organization> queryWrapper = new LambdaQueryWrapper<Organization>()
+                .eq(Organization::getParentId, parentId);
+        List<Organization> children = list(queryWrapper);
+
+        for (Organization child : children) {
+            collectOrgIds(child.getId(), result); // 递归查下级
         }
     }
 }

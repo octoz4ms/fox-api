@@ -31,4 +31,6 @@ public interface IUserService extends IService<User> {
     boolean existenceUser(String field, String value);
 
     void resetPassword(User user);
+
+    void updateStatus(Long userId, Integer status);
 }

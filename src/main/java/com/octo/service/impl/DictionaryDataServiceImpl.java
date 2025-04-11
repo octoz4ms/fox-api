@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.octo.dto.response.PageResult;
+import com.octo.entity.Dictionary;
 import com.octo.entity.DictionaryData;
 import com.octo.enums.ResponseCodeEnums;
 import com.octo.exception.CustomException;
 import com.octo.mapper.DictionaryDataMapper;
 import com.octo.service.IDictionaryDataService;
+import com.octo.service.IDictionaryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,9 @@ import java.util.List;
  */
 @Service
 public class DictionaryDataServiceImpl extends ServiceImpl<DictionaryDataMapper, DictionaryData> implements IDictionaryDataService {
+
+    @Autowired
+    private IDictionaryService dictionaryService;
 
     @Override
     public PageResult<DictionaryData> pageDictionaryData(DictionaryData dictionaryData, String sortField, String sortOrder, int pageNum, int pageSize) {
@@ -58,6 +64,18 @@ public class DictionaryDataServiceImpl extends ServiceImpl<DictionaryDataMapper,
 
         Page<DictionaryData> dataPage = page(dictionaryDataPage, queryWrapper);
         return new PageResult<>(dataPage);
+    }
+
+    @Override
+    public List<DictionaryData> listDictionaryData(String dictCode) {
+        Dictionary dictionary = dictionaryService.getOne(new LambdaQueryWrapper<>(Dictionary.class).eq(Dictionary::getDictCode, dictCode));
+        if (dictionary == null) {
+            return List.of();
+        }
+        LambdaQueryWrapper<DictionaryData> queryWrapper = new LambdaQueryWrapper<DictionaryData>()
+                .eq(DictionaryData::getDictId, dictionary.getId())
+                .orderByAsc(DictionaryData::getSortNumber);
+        return list(queryWrapper);
     }
 
     @Override
